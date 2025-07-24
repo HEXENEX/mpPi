@@ -35,9 +35,13 @@ Step 3:
 Step 4:
   - DAC
 
+Step 5:
+  - Proper Case
+
 ### Future Propects
   - Video Player
     - Composite video out like 5th gen classic
+  - Refactor Code to C++
 
 ## Special Thanks
 - Apple for the original ipod
