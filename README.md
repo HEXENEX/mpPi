@@ -11,6 +11,8 @@ Parts needed for advanced form:
   - Connector Port (USB-C)
   - Likely other parts I have not thought of yet
 
+Building Guide: https://docs.google.com/document/d/1XwhfeOkbN93wCHk-AwTpOQk8uyo2gPRMQpYmsx6mDbI/edit?usp=sharing 
+
 Development Stages:
 
 Step 0: <-- Currently here
