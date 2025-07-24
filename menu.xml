@@ -1,0 +1,43 @@
+<menu>
+    <item label='Resume Playing' action='m_player'/>
+    <item label='Songs'>
+        <submenu>
+            <item label='Artist' action='load_songs' filter='artist'/>
+            <item label='Album' action='load_songs' filter='album'/>
+            <item label='Title' action='load_songs' filter=''/>
+            <item label='Playlists' action='pl_viewer'/>
+            <item label='Search'>
+                <submenu>
+                    <item label='By Artist' action='search_database' filter='artist'/>
+                    <item label='By Album' action='search_database' filter='album'/>
+                    <item label='By Title' action='search_database' filter='title'/>
+                    <item label='By Year' action='search_database' filter='year'/>
+                    <item label='By Any' action='search_database' filter=''/>
+                </submenu>
+            </item>
+            <item label='Update Database' action='cu_database'/>
+        </submenu>
+    </item>
+    <item label='Playlists' action='pl_viewer'/>
+    <item label='Settings'>
+        <submenu>
+            <item label='Bluetooth' value='False'/>
+            <item label='Wifi' value='False'/>
+            <item label='Backlight Timer' value='60'/>
+            <item label='Shutdown Timer' value='300'/>
+            <item label='Font Size' value='20'/>
+        </submenu>
+    </item>
+    <item label='About'>
+        <submenu>
+            <item label='Songs: {value}'/>
+            <item label='version a0.1'/>
+            <item label='Credits'>
+                <submenu>
+                    <item label='Ryan'/>
+                    <item label='Apple inc.'/>
+                </submenu>
+            </item>
+        </submenu>
+    </item>
+</menu>
