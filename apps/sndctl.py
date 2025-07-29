@@ -46,6 +46,7 @@ def input_handler():
 
 def init_player():
     player = vlc.MediaPlayer("library/Music/Death Roll - Wage War.mp3")
+    player.audio_set_volume(10)
     player.play()
 
     time.sleep(10)
