@@ -2,9 +2,7 @@
 echo "startup sequence starting..."
 
 echo "pulling repository"
-cd startup
-python3 pullrequest.py
-cd ..
+python3 startup/pullrequest.py
 
 git fetch origin
 git reset --hard origin/main
