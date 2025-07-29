@@ -83,8 +83,8 @@ def update_screen(menu_options=[]):
 
 
 # runtime loop
-menu_gen = load_menu()  # load once at start
-update_screen(menu_gen)   # draw screen
+current_menu_options = load_menu()  # load once at start
+update_screen(current_menu_options)   # draw screen
 
 try:
     idx = 0
