@@ -1,7 +1,8 @@
 #!/bin/bash
-echo "startup"
+echo "startup sequence starting..."
 
 echo "pulling repository"
+python3 startup/pullrequest.py &
 git pull
 
 echo "running mpPi UI"
