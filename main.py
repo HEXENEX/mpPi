@@ -12,7 +12,7 @@ device = st7789(serial, width=320, height=240, rotate=0)
 
 # draw test text
 img = Image.new("RGB", device.size, "black")
-font = ImageFont.truetype("Sans.ttf", 28)
+font = ImageFont.truetype("assets/Sans.ttf", 28)
 draw = ImageDraw.Draw(img)
 draw.rectangle((0, 0, 319, 239), fill="white")
 draw.text((0, 0), "Hello DietPi", font=font, fill="black")
