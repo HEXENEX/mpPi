@@ -60,8 +60,16 @@ menu_gen = load_menu()  # load once at start
 draw_screen(menu_gen)   # draw screen
 
 try:
+    idx = 0
     while is_running:
-        time.sleep(0.0625)  # refresh rate ~16 fps
+        draw_screen(menu_gen, idx)
+        idx += 1
+
+        if idx > 4:
+            idx = 0
+
+        time.sleep(0.5)
+        #time.sleep(0.0625)  # refresh rate ~16 fps
 except KeyboardInterrupt:
     is_running = False
     GPIO.cleanup()
