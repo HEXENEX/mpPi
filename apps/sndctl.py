@@ -44,6 +44,13 @@ def input_handler():
         update_screen()
 
 
+def init_player():
+    player = vlc.MediaPlayer("library/Music/Death Roll - Wage War.mp3")
+    player.play()
+
+    time.sleep(10)
+
+
 def update_screen():
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
