@@ -41,7 +41,7 @@ def draw_screen(menu_options=[], idx=0):
     draw = ImageDraw.Draw(img)
 
     # add highlight box
-    draw.rectangle((0, 0, 320, (font_size + label_margin) * (idx + 1)), fill=highlight_color)
+    draw.rectangle((0, (font_size + label_margin) * idx, 320, (font_size + label_margin) * (idx + 1)), fill=highlight_color)
 
     # add menu text options
     x_offset = label_margin
