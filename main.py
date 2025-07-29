@@ -14,7 +14,7 @@ label_margin = 4
 text_color = "black"
 hl_text_color = "white"
 bg_color = "white"
-highlight_color = (44, 129, 194)
+highlight_color = (44, 121, 199)
 
 # init var
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
@@ -29,6 +29,12 @@ def input_handler():
     # input from GPIO pins and trackpad here
         # but for now it will be simulated
     
+    sim_mode = True
+    if sim_mode == True:
+        print("sim input mode")
+        
+        u_input = input("input: ")
+        
     return
 
 
@@ -81,6 +87,7 @@ try:
 
         time.sleep(0.5)
         #time.sleep(0.0625)  # refresh rate ~16 fps
+
 except KeyboardInterrupt:
     is_running = False
     GPIO.cleanup()
