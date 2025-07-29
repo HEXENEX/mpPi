@@ -34,11 +34,14 @@ def load_menu(menu_file="menu.xml"):
     print(menu_options)
     return menu_options
 
-def draw_screen(menu_options=[]):
+def draw_screen(menu_options=[], idx=0):
     # Background color
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
+
+    # add highlight box
+    draw.rectangle((0, 0, 320, (font_size + label_margin) * (idx + 1)), fill=highlight_color)
 
     # add menu text options
     x_offset = label_margin
@@ -54,11 +57,11 @@ def draw_screen(menu_options=[]):
 
 # runtime loop
 menu_gen = load_menu()  # load once at start
-draw_screen(menu_gen) # draw screen
+draw_screen(menu_gen)   # draw screen
 
 try:
     while is_running:
-        time.sleep(0.0625)  # refresh ~16 fps
+        time.sleep(0.0625)  # refresh rate ~16 fps
 except KeyboardInterrupt:
     is_running = False
     GPIO.cleanup()
