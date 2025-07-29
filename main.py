@@ -17,7 +17,7 @@ bg_color = "white"
 highlight_color = (44, 129, 194)
 
 # init var
-serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
+serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
