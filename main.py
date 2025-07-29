@@ -14,12 +14,13 @@ serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
 
-def load_menu(menu_tree="menu.xml"):
-    root = ET.fromstring(menu_tree)
+def load_menu(menu_file="menu.xml"):
+    root = ET.parse(menu_file)
 
-    for element, label in root:
-        print(element)
-        print(f"    {label}")
+    for item in root.iter("item"):
+        label = item.attrib.get("label", "")
+        action = item.append.get("action", "")
+        print(f"{label} ({action})")
 
     print("loaded menu")
     return
