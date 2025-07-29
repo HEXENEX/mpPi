@@ -9,11 +9,11 @@ import RPi.GPIO as GPIO
 # global vars
 is_running = True
 backlight_brightness = 100
-font_size = 28
-label_margin = 2
+font_size = 26
+label_margin = 4
 text_color = "black"
 bg_color = "white"
-highlight_color = "blue"
+highlight_color = (44, 129, 194)
 
 # init var
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
@@ -22,6 +22,13 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
 pwm = GPIO.PWM(18, 1000)
 pwm.start(backlight_brightness) # 100 on
+
+
+def input_handler():
+    # input from GPIO pins and trackpad here
+        # but for now it will be simulated
+    
+    return
 
 
 def load_menu(menu_file="menu.xml"):
