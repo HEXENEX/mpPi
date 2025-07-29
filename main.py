@@ -8,8 +8,11 @@ import RPi.GPIO as GPIO
 
 # global vars
 is_running = True
+select_idx = 0
+current_menu_options = []
+
 backlight_brightness = 100
-font_size = 26
+font_size = 22
 label_margin = 4
 text_color = "black"
 hl_text_color = "white"
@@ -32,35 +35,42 @@ def input_handler():
     sim_mode = True
     if sim_mode == True:
         print("sim input mode")
-        
         u_input = input("input: ")
         
+        if u_input == "w":
+            select_idx += 1
+            update_screen(current_menu_options, select_idx)
+        elif u_input == "x":
+            select_idx -= 1
+            update_screen(current_menu_options, select_idx)
+            
     return
 
 
 def load_menu(menu_file="menu.xml"):
+    global current_menu_options
     root = ET.parse(menu_file)
     menu_options = []
 
     for item in root.findall("item"):
         menu_options.append(item.attrib.get("label"))
 
-    return menu_options
+    current_menu_options = menu_options
 
-def update_screen(menu_options=[], idx=0):
+def update_screen(menu_options=[]):
     # Background color
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
     # add highlight box
-    draw.rectangle((0, (font_size + label_margin) * idx, 320, (font_size + label_margin) * (idx + 1)), fill=highlight_color)
+    draw.rectangle((0, (font_size + label_margin) * select_idx, 320, (font_size + label_margin) * (select_idx + 1)), fill=highlight_color)
 
     # add menu text options
     x_offset = label_margin
     y_offset = label_margin
     for label in menu_options:
-        if label == menu_options[idx]:
+        if label == menu_options[select_idx]:
             # if the menu item is selected text color will be white
             draw.text((x_offset, y_offset), label, font=font, fill=hl_text_color)
         else:
@@ -79,14 +89,8 @@ update_screen(menu_gen)   # draw screen
 try:
     idx = 0
     while is_running:
-        update_screen(menu_gen, idx)
-        idx += 1
-
-        if idx > 4:
-            idx = 0
-
-        time.sleep(0.5)
-        #time.sleep(0.0625)  # refresh rate ~16 fps
+        input_handler()
+        time.sleep(0.0625)  # refresh rate ~16 fps
 
 except KeyboardInterrupt:
     is_running = False
