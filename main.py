@@ -39,17 +39,16 @@ def load_menu(menu_file="menu.xml"):
     for item in root.findall("item"):
         menu_options.append(item.attrib.get("label"))
 
-    print(menu_options)
     return menu_options
 
-def draw_screen(menu_options=[], idx=0):
+def update_screen(menu_options=[], idx=0):
     # Background color
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
     # add highlight box
-    draw.rectangle((0, (font_size + label_margin) * idx, 320, (font_size + label_margin) * (idx + 1)), fill=highlight_color)
+    draw.rectangle((0, (font_size + (label_margin / 2)) * idx, 320, (font_size + (label_margin / 2)) * (idx + 1)), fill=highlight_color)
 
     # add menu text options
     x_offset = label_margin
@@ -64,18 +63,17 @@ def draw_screen(menu_options=[], idx=0):
         y_offset += font_size + label_margin
 
     device.display(img)
-
     return
 
 
 # runtime loop
 menu_gen = load_menu()  # load once at start
-draw_screen(menu_gen)   # draw screen
+update_screen(menu_gen)   # draw screen
 
 try:
     idx = 0
     while is_running:
-        draw_screen(menu_gen, idx)
+        update_screen(menu_gen, idx)
         idx += 1
 
         if idx > 4:
