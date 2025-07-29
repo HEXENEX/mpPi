@@ -10,10 +10,9 @@ device = st7789(serial, width=320, height=240, rotate=0)
 
 # draw test text
 img = Image.new("RGB", device.size, "black")
-font = ImageFont.truetype("/../assets/Sans.ttf", 48)
 draw = ImageDraw.Draw(img)
 draw.rectangle((0, 0, 320, 240), fill="black")
-draw.text((160, 120), "Pulling Repository", font=font, fill="white")
+draw.text((160, 120), "Pulling Repository", fill="white")
 
 
 GPIO.setmode(GPIO.BCM)
