@@ -12,6 +12,7 @@ backlight_brightness = 100
 font_size = 26
 label_margin = 4
 text_color = "black"
+hl_text_color = "white"
 bg_color = "white"
 highlight_color = (44, 129, 194)
 
@@ -54,7 +55,12 @@ def draw_screen(menu_options=[], idx=0):
     x_offset = label_margin
     y_offset = label_margin
     for label in menu_options:
-        draw.text((x_offset, y_offset), label, font=font, fill=text_color)
+        if label == menu_options[idx]:
+            # if the menu item is selected text color will be white
+            draw.text((x_offset, y_offset), label, font=font, fill=hl_text_color)
+        else:
+            # if not it will be black
+            draw.text((x_offset, y_offset), label, font=font, fill=text_color)
         y_offset += font_size + label_margin
 
     device.display(img)
