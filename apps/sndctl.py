@@ -1,7 +1,3 @@
-#
-#   App for the currently playing menu
-#
-
 from PIL import ImageDraw, Image, ImageFont
 from luma.core.interface.serial import spi
 import xml.etree.ElementTree as ET
@@ -16,6 +12,7 @@ import vlc
 is_running = True
 
 # appearance settings
+volume = 80
 backlight_brightness = 100
 font_size = 22
 label_margin = 4
@@ -45,12 +42,12 @@ def input_handler():
 
 
 def init_player():
-    player = vlc.MediaPlayer("library/Music/Death Roll - Wage War.mp3")
-    player.audio_set_volume(10)
+    instance = vlc.Instance('--aout', 'alsa')  # force ALSA only
+    player = instance.media_player_new()
+    media = instance.media_new("library/Music/Death Roll - Wage War.mp3")
+    player.set_media(media)
+    player.audio_set_volume(volume)
     player.play()
-
-    time.sleep(10)
-
 
 def update_screen():
     img = Image.new("RGB", device.size, bg_color)

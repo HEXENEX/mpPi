@@ -73,10 +73,15 @@ def load_menu_root(menu_file="menu.xml"):
 
 
 def update_screen(menu_options, selected_index):
+    # background
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
+    # header
+    
+
+    # menu options
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
         y = i * (font_size + label_margin)
