@@ -8,7 +8,7 @@ serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
 
-# draw test text
+# draw splash screen
 img = Image.new("RGB", device.size, "black")
 font = ImageFont.truetype("assets/Sans.ttf", 28)
 draw = ImageDraw.Draw(img)
@@ -25,7 +25,8 @@ pwm.start(100) # 100 on
 
 device.display(img)
 
-time.sleep(5)
 
+# loop
+time.sleep(5)
 pwm.ChangeDutyCycle(1)
 time.sleep(5)
