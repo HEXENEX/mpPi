@@ -5,12 +5,12 @@ from PIL import ImageDraw, Image, ImageFont
 import time
 import RPi.GPIO as GPIO
 
-
 # global vars
 is_running = True
 select_idx = 0
 current_menu_options = []
 
+# appearance settings
 backlight_brightness = 100
 font_size = 22
 label_margin = 4
@@ -19,78 +19,71 @@ hl_text_color = "white"
 bg_color = "white"
 highlight_color = (44, 121, 199)
 
-# init var
+# init screen + backlight
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
 device = st7789(serial, width=320, height=240, rotate=0)
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
 pwm = GPIO.PWM(18, 1000)
-pwm.start(backlight_brightness) # 100 on
+pwm.start(backlight_brightness)
 
+# --- Menu Logic --- #
 
 def input_handler():
-    # input from GPIO pins and trackpad here
-        # but for now it will be simulated
-    
+    global select_idx
     sim_mode = True
-    if sim_mode == True:
+
+    if sim_mode:
         print("sim input mode")
         u_input = input("input: ")
-        
-        if u_input == "w":
-            select_idx += 1
-            update_screen(current_menu_options, select_idx)
-        elif u_input == "x":
-            select_idx -= 1
-            update_screen(current_menu_options, select_idx)
-            
-    return
+
+        if u_input == "w":  # down
+            if select_idx < len(current_menu_options) - 1:
+                select_idx += 1
+        elif u_input == "x":  # up
+            if select_idx > 0:
+                select_idx -= 1
+
+        update_screen(current_menu_options, select_idx)
 
 
 def load_menu(menu_file="menu.xml"):
-    global current_menu_options
-    root = ET.parse(menu_file)
     menu_options = []
+    root = ET.parse(menu_file).getroot()
 
     for item in root.findall("item"):
-        menu_options.append(item.attrib.get("label"))
+        label = item.attrib.get("label", "")
+        if label:
+            menu_options.append(label)
 
-    current_menu_options = menu_options
+    return menu_options
 
-def update_screen(menu_options=[]):
-    # Background color
+
+def update_screen(menu_options, selected_index):
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
-    # add highlight box
-    draw.rectangle((0, (font_size + label_margin) * select_idx, 320, (font_size + label_margin) * (select_idx + 1)), fill=highlight_color)
-
-    # add menu text options
-    x_offset = label_margin
-    y_offset = label_margin
-    for label in menu_options:
-        if label == menu_options[select_idx]:
-            # if the menu item is selected text color will be white
-            draw.text((x_offset, y_offset), label, font=font, fill=hl_text_color)
+    for i, label in enumerate(menu_options):
+        y = i * (font_size + label_margin)
+        if i == selected_index:
+            draw.rectangle((0, y, 320, y + font_size + label_margin), fill=highlight_color)
+            draw.text((label_margin, y), label, font=font, fill=hl_text_color)
         else:
-            # if not it will be black
-            draw.text((x_offset, y_offset), label, font=font, fill=text_color)
-        y_offset += font_size + label_margin
+            draw.text((label_margin, y), label, font=font, fill=text_color)
 
     device.display(img)
-    return
 
-
-# runtime loop
-current_menu_options = load_menu()  # load once at start
-update_screen(current_menu_options)   # draw screen
+# --- Runtime --- #
 
 try:
-    idx = 0
+    current_menu_options = load_menu()
+    update_screen(current_menu_options, select_idx)
+
     while is_running:
         input_handler()
-        time.sleep(0.0625)  # refresh rate ~16 fps
+        time.sleep(0.0625)
 
 except KeyboardInterrupt:
     is_running = False
