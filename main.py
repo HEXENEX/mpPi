@@ -9,6 +9,7 @@ import RPi.GPIO as GPIO
 is_running = True
 select_idx = 0
 current_menu_options = []
+menu_stack = []  # stack of XML <menu>/<submenu> nodes
 
 # appearance settings
 backlight_brightness = 100
@@ -28,34 +29,47 @@ GPIO.setup(18, GPIO.OUT)
 pwm = GPIO.PWM(18, 1000)
 pwm.start(backlight_brightness)
 
-# --- Menu Logic --- #
-
 def input_handler():
-    global select_idx
-    sim_mode = True
+    global select_idx, current_menu_options
 
+    sim_mode = True
     if sim_mode:
         print("sim input mode")
         u_input = input("input: ")
 
         if u_input == "w":  # up
-            select_idx -= 1
+            if select_idx > 0:
+                select_idx -= 1
+
         elif u_input == "x":  # down
-            select_idx += 1
+            if select_idx < len(current_menu_options) - 1:
+                select_idx += 1
+
+        elif u_input == "s":  # select
+            selected_item = current_menu_options[select_idx]
+            submenu = selected_item.find("submenu")
+            if submenu is not None:
+                menu_stack.append(submenu)
+                select_idx = 0
+                current_menu_options = list(submenu.findall("item"))
+
+        elif u_input == "b":  # back
+            if menu_stack:
+                menu_stack.pop()
+                if menu_stack:
+                    current_menu_options = list(menu_stack[-1].findall("item"))
+                else:
+                    current_menu_options = load_menu_root()
+                select_idx = 0
 
         update_screen(current_menu_options, select_idx)
 
 
-def load_menu(menu_file="menu.xml"):
-    menu_options = []
-    root = ET.parse(menu_file).getroot()
-
-    for item in root.findall("item"):
-        label = item.attrib.get("label", "")
-        if label:
-            menu_options.append(label)
-
-    return menu_options
+def load_menu_root(menu_file="menu.xml"):
+    tree = ET.parse(menu_file)
+    root = tree.getroot()
+    menu_stack.clear()
+    return list(root.findall("item"))
 
 
 def update_screen(menu_options, selected_index):
@@ -63,7 +77,8 @@ def update_screen(menu_options, selected_index):
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
-    for i, label in enumerate(menu_options):
+    for i, item in enumerate(menu_options):
+        label = item.attrib.get("label", "")
         y = i * (font_size + label_margin)
 
         if i == selected_index:
@@ -77,7 +92,7 @@ def update_screen(menu_options, selected_index):
 # --- Runtime --- #
 
 try:
-    current_menu_options = load_menu()
+    current_menu_options = load_menu_root()
     update_screen(current_menu_options, select_idx)
 
     while is_running:
