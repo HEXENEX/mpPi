@@ -68,9 +68,9 @@ def update_screen(menu_options, selected_index):
 
         if i == selected_index:
             draw.rectangle((0, y, 320, y + font_size + label_margin), fill=highlight_color)
-            draw.text((label_margin, y), label, font=font, fill=hl_text_color)
+            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=hl_text_color)
         else:
-            draw.text((label_margin, y), label, font=font, fill=text_color)
+            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=text_color)
 
     device.display(img)
 
