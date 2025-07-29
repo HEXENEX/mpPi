@@ -65,9 +65,10 @@ def update_screen():
 try:
     # --- startup commands --- #
     update_screen()
+    init_player()
 
     while is_running:
-        input_handler()
+        #input_handler()
         time.sleep(0.0625)
 
 except KeyboardInterrupt:
