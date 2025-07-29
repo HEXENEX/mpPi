@@ -1,91 +1,38 @@
-import pygame as pg
-import sys
-import xml.etree.ElementTree as ET
+from luma.core.interface.serial import spi
+from luma.lcd.device import st7789
+from PIL import ImageDraw, Image, ImageFont
+import time
+import RPi.GPIO as GPIO
 
-# screen + style
-screen_width = 320
-screen_height = 240
-font_size = 20
-button_height = font_size + 4
-background_color = (255, 255, 255)
-highlight_color = (37, 165, 245)
-font_color = (0, 0, 0)
+buspeed = 52 * 1000000
 
-# state
-menu_history_stack = []
-selected = 0
+serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=buspeed)
+device = st7789(serial, width=320, height=240, rotate=0)
 
-# parse XML
-def load_menu_from_xml(xml_file):
-    tree = ET.parse(xml_file)
-    return tree.getroot()
 
-# extract items from XML element
-def get_menu_items(xml_element):
-    items = []
-    for item in xml_element.findall('item'):
-        items.append({
-            'label': item.attrib.get('label', 'Unnamed'),
-            'action': item.attrib.get('action'),
-            'filter': item.attrib.get('filter'),
-            'submenu': item.find('submenu'),
-            'element': item
-        })
-    return items
+# draw test text
+img = Image.new("RGB", device.size, "black")
+font = ImageFont.truetype("Sans.ttf", 28)
+draw = ImageDraw.Draw(img)
+draw.rectangle((0, 0, 319, 239), fill="white")
+draw.text((0, 0), "Hello DietPi", font=font, fill="black")
 
-# main loop
-def main():
-    global selected
 
-    pg.init()
-    screen = pg.display.set_mode((screen_width, screen_height))
-    pg.display.set_caption("mpPi")
-    clock = pg.time.Clock()
-    font = pg.font.Font('assets/Sans.ttf', font_size)
 
-    # load root menu
-    root_menu = load_menu_from_xml("menu.xml")
-    current_menu = root_menu
-    menu_items = get_menu_items(current_menu)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+pwm = GPIO.PWM(18, 1000)
+pwm.start(100) # 100 on
 
-    while True:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
+device.display(img)
 
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_UP:
-                    selected = (selected - 1) % len(menu_items)
-                elif event.key == pg.K_DOWN:
-                    selected = (selected + 1) % len(menu_items)
-                elif event.key == pg.K_RETURN:
-                    item = menu_items[selected]
-                    if item['submenu'] is not None:
-                        # Push current menu to history
-                        menu_history_stack.append((current_menu, selected))
-                        current_menu = item['element'].find('submenu')
-                        menu_items = get_menu_items(current_menu)
-                        selected = 0
-                    elif item['action']:
-                        print(f"Running action: {item['action']}, filter: {item['filter']}")
-                elif event.key == pg.K_LEFT:
-                    # Go back
-                    if menu_history_stack:
-                        current_menu, selected = menu_history_stack.pop()
-                        menu_items = get_menu_items(current_menu)
+time.sleep(2)
 
-        # draw menu
-        screen.fill(background_color)
-        for i, item in enumerate(menu_items):
-            if i == selected:
-                pg.draw.rect(screen, highlight_color, (10, button_height + i*button_height, 300, 30))
-            text = font.render(item['label'], True, font_color)
-            screen.blit(text, (20, button_height + i*button_height))
+pwm.ChangeDutyCycle(50)
+time.sleep(2)
 
-        pg.display.flip()
-        clock.tick(60)
+pwm.ChangeDutyCycle(25)
+time.sleep(2)
 
-# run
-if __name__ == "__main__":
-    main()
+pwm.ChangeDutyCycle(1)
+time.sleep(2)
