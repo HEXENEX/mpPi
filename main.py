@@ -18,6 +18,10 @@ highlight_color = "blue"
 # init var
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
 device = st7789(serial, width=320, height=240, rotate=0)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+pwm = GPIO.PWM(18, 1000)
+pwm.start(backlight_brightness) # 100 on
 
 
 def load_menu(menu_file="menu.xml"):
@@ -43,12 +47,6 @@ def draw_screen(menu_options=[]):
         draw.text((x_offset, y_offset), label, font=font, fill=text_color)
         y_offset += font_size + label_margin
 
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(18, GPIO.OUT)
-    pwm = GPIO.PWM(18, 1000)
-    pwm.start(backlight_brightness) # 100 on
-
     device.display(img)
 
     return
@@ -56,11 +54,11 @@ def draw_screen(menu_options=[]):
 
 # runtime loop
 menu_gen = load_menu()  # load once at start
+draw_screen(menu_gen) # draw screen
 
 try:
     while is_running:
-        draw_screen(menu_gen) # draw screen
-        time.sleep(0.0625)  # ~16 fps
+        time.sleep(0.0625)  # refresh ~16 fps
 except KeyboardInterrupt:
     is_running = False
     GPIO.cleanup()
