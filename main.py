@@ -28,7 +28,7 @@ def load_menu(menu_file="menu.xml"):
         menu_options.append(item.attrib.get("label"))
 
     print(menu_options)
-    return
+    return menu_options
 
 def draw_screen(menu_options=[]):
     # Background color
@@ -55,13 +55,12 @@ def draw_screen(menu_options=[]):
 
 
 # runtime loop
-menu = load_menu()  # only load once at start
-draw_screen()       # draw once
+menu_gen = load_menu()  # load once at start
 
 try:
     while is_running:
-        # put update logic here if needed
-        time.sleep(0.0625)  # ~16 fps if needed
+        draw_screen(menu_gen) # draw screen
+        time.sleep(0.0625)  # ~16 fps
 except KeyboardInterrupt:
     is_running = False
     GPIO.cleanup()
