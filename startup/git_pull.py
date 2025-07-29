@@ -21,4 +21,4 @@ pwm = GPIO.PWM(18, 1000)
 pwm.start(100) # 100 on
 
 device.display(img)
-time.sleep(0.5)
+time.sleep(1)

@@ -3,7 +3,7 @@ echo "startup sequence starting..."
 
 echo "pulling repository"
 cd startup
-python3 pullrequest.py
+python3 git_pull.py
 cd ..
 
 git fetch origin

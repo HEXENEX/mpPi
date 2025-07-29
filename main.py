@@ -8,13 +8,20 @@ serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
 
-# draw splash screen
-img = Image.new("RGB", device.size, "black")
+def select_down():
+    return
+
+# Background color
+img = Image.new("RGB", device.size, "white")
 font = ImageFont.truetype("assets/Sans.ttf", 28)
 draw = ImageDraw.Draw(img)
-draw.rectangle((0, 0, 319, 239), fill="white")
-draw.text((1, 1), "Welcome DietPi", font=font, fill="black")
-draw.text((1, 30), "Play Shit", font=font, fill="black")
+
+# menu text
+draw.text((1, 1), "Resume Playing", font=font, fill="black")
+draw.text((1, 30), "Songs", font=font, fill="black")
+draw.text((1, 60), "Playlists", font=font, fill="black")
+draw.text((1, 90), "Settings", font=font, fill="black")
+draw.text((1, 120), "About", font=font, fill="black")
 
 
 
