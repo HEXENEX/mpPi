@@ -8,6 +8,7 @@ import RPi.GPIO as GPIO
 
 # global vars
 is_running = True
+backlight_brightness = 100
 
 # init var
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
@@ -19,7 +20,7 @@ def load_menu(menu_file="menu.xml"):
 
     for item in root.iter("item"):
         label = item.attrib.get("label", "")
-        action = item.append.get("action", "")
+        action = item.attrib.get("action", "")
         print(f"{label} ({action})")
 
     print("loaded menu")
@@ -41,7 +42,7 @@ def draw_screen():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(18, GPIO.OUT)
     pwm = GPIO.PWM(18, 1000)
-    pwm.start(100) # 100 on
+    pwm.start(backlight_brightness) # 100 on
 
     device.display(img)
 
