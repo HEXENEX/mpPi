@@ -47,7 +47,15 @@ def draw_screen():
 
     return
 
+
 # runtime loop
-while is_running == True:
-    load_menu()
-    time.sleep(0.0625) # pause for 1/16 of a second, making it 16fps
+menu = load_menu()  # only load once at start
+draw_screen()       # draw once
+
+try:
+    while is_running:
+        # put update logic here if needed
+        time.sleep(0.0625)  # ~16 fps if needed
+except KeyboardInterrupt:
+    is_running = False
+    GPIO.cleanup()
