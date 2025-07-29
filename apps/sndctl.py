@@ -44,7 +44,7 @@ def input_handler():
         update_screen()
 
 
-def update_screen(menu_options, selected_index):
+def update_screen():
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/Sans.ttf", font_size)
     draw = ImageDraw.Draw(img)
