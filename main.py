@@ -38,12 +38,10 @@ def input_handler():
         print("sim input mode")
         u_input = input("input: ")
 
-        if u_input == "w":  # down
-            if select_idx < len(current_menu_options) - 1:
-                select_idx += 1
-        elif u_input == "x":  # up
-            if select_idx > 0:
-                select_idx -= 1
+        if u_input == "w":  # up
+            select_idx -= 1
+        elif u_input == "x":  # down
+            select_idx += 1
 
         update_screen(current_menu_options, select_idx)
 
@@ -70,9 +68,9 @@ def update_screen(menu_options, selected_index):
 
         if i == selected_index:
             draw.rectangle((0, y, 320, y + font_size + label_margin), fill=highlight_color)
-            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=hl_text_color)
+            draw.text((label_margin, y), label, font=font, fill=hl_text_color)
         else:
-            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=text_color)
+            draw.text((label_margin, y), label, font=font, fill=text_color)
 
     device.display(img)
 
