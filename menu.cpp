@@ -1,5 +1,5 @@
-// C++ rewrite of menu.py and sndctl.py (minimal equivalent)
-// Dependencies: libvlc, taglib, FreeType, ST7789 framebuffer driver, wiringPi or pigpio
+// C++ rewrite of menu.py and sndctl.py using pigpio
+// Dependencies: libvlc, taglib, FreeType, ST7789 framebuffer driver, pigpio
 
 #include <iostream>
 #include <fstream>
@@ -13,7 +13,7 @@
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
 #include <png.h> // or stb_image if preferred
-#include <wiringPi.h>
+#include <pigpio.h>
 #include "st7789.h" // assumed you have a driver for this
 
 // --- Constants ---
@@ -108,7 +108,11 @@ void handleInput(char input) {
 
 // --- Main Loop ---
 int main() {
-    wiringPiSetupGpio();
+    if (gpioInitialise() < 0) {
+        std::cerr << "Failed to initialize pigpio" << std::endl;
+        return 1;
+    }
+
     initPlayer();
 
     while (showPlayer) {
@@ -125,5 +129,6 @@ int main() {
     libvlc_media_player_stop(player);
     libvlc_media_player_release(player);
     libvlc_release(vlcInstance);
+    gpioTerminate();
     return 0;
 }
