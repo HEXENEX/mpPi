@@ -85,16 +85,21 @@ def init_once():
 
 def update_screen():
     global player, device, font
+
+    #background
     img = Image.new("RGB", device.size, "white")
     draw = ImageDraw.Draw(img)
 
+    # header
     draw.rectangle((0, 0, 320, 24), fill=(225, 225, 225))
     draw.text((110, -4), "Now Playing", font=font, fill="black")
 
+    # playlist index
     current_index = 1
     total_songs = 1
     draw.text((8, 30), f"{current_index} of {total_songs}", font=font, fill="black")
 
+    # shuffle
     shuffle = True
     if shuffle:
         shuffleimg = Image.open("assets/shuffleicon.png").convert("RGBA")
@@ -103,6 +108,7 @@ def update_screen():
         inverted.putalpha(a)
         img.paste(inverted, (280, 30), mask=inverted)
 
+    # playback bar
     try:
         total_ms = player.get_length()
         elapsed_ms = player.get_time()

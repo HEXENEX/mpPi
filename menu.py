@@ -14,7 +14,7 @@ import apps.sndctl as sndctl
 
 # global vars
 is_running = True
-select_idx = 0
+menu_idx = 0
 current_menu_options = []
 menu_stack = []
 
@@ -34,6 +34,7 @@ hl_text_color = "white"
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
+# backlight pwm
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
 pwm = GPIO.PWM(18, 1000)
@@ -60,27 +61,27 @@ def input_handler():
             elif u_input == "a":
                 prev_press()
 
-            update_screen(current_menu_options, select_idx)
+            update_screen(current_menu_options, menu_idx)
 
 def menu_up():
-    global select_idx
-    if select_idx > 0:
-        select_idx -= 1
+    global menu_idx
+    if menu_idx > 0:
+        menu_idx -= 1
 
 def menu_down():
-    global select_idx
-    if select_idx < len(current_menu_options) - 1:
-        select_idx += 1
+    global menu_idx
+    if menu_idx < len(current_menu_options) - 1:
+        menu_idx += 1
 
 def select_press():
-    global select_idx, current_menu_options
-    selected_item = current_menu_options[select_idx]
+    global menu_idx, current_menu_options
+    selected_item = current_menu_options[menu_idx]
     submenu = selected_item.find("submenu")
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
         menu_stack.append(submenu)
-        select_idx = 0
+        menu_idx = 0
         current_menu_options = list(submenu.findall("item"))
 
     if app is not None:
@@ -88,14 +89,14 @@ def select_press():
             sndctl.launch_ui()
 
 def menu_press():
-    global select_idx, current_menu_options
+    global menu_idx, current_menu_options
     if menu_stack:
         menu_stack.pop()
         if menu_stack:
             current_menu_options = list(menu_stack[-1].findall("item"))
         else:
             current_menu_options = load_menu_root()
-        select_idx = 0
+        menu_idx = 0
 
 def skip_press():
     pass
@@ -138,7 +139,7 @@ def update_screen(menu_options, selected_index):
 
 try:
     current_menu_options = load_menu_root()
-    update_screen(current_menu_options, select_idx)
+    update_screen(current_menu_options, menu_idx)
 
     while is_running:
         input_handler()
