@@ -3,13 +3,13 @@ from luma.core.interface.serial import spi
 from luma.lcd.device import st7789
 import xml.etree.ElementTree as ET
 import RPi.GPIO as GPIO
-import subprocess
 import select
 import time
 import sys
 
 # importing apps
 import apps.sndctl as sndctl
+import apps.mklib as mklib
 
 
 # global vars

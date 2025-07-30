@@ -1,0 +1,18 @@
+<lib>
+    <song>
+        <title></title>
+        <album></album>
+        <artist></artist>
+        <album_artist></album_artist>
+        <genre></genre>
+        <track_num></track_num>
+        <disc_num></disc_num>
+        <year></year>
+        <comment></comment>
+        <last_played></last_played>
+        <last_skipped></last_skipped>
+        <plays></plays>
+        <rating></rating>
+        <path></path>
+    </song>
+</lib>
