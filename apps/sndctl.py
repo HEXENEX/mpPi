@@ -1,6 +1,6 @@
 # apps/sndctl/__init__.py
 
-from PIL import ImageDraw, Image, ImageFont, Image, ImageOps
+from PIL import ImageDraw, Image, ImageFont, ImageOps, Image
 from luma.core.interface.serial import spi
 from luma.lcd.device import st7789
 from mutagen.id3 import ID3, APIC
@@ -11,14 +11,16 @@ import time
 import vlc
 import sys
 
-# persistent player instance
+# --- Constants ---
 song_path = "library/Music/94_from up on silent hill - Savage Ga$p.mp3"
 volume = 40
+
+# --- Globals ---
 player = None
 device = None
-serial = None
 font = None
-
+metadata_cache = None
+album_art_cache = None
 show_player = True
 
 def input_handler():
@@ -66,11 +68,11 @@ def prev_press():
     print("replay song / go to prev song if in first 1 second of play")
 
 
+# --- Initialization ---
 def init_once():
-    global player, serial, device, font
+    global player, serial, device, font, shuffle_icon
 
-    if player is not None:
-        return  # already initialized
+    if player: return
 
     instance = vlc.Instance('--aout', 'alsa')
     player = instance.media_player_new()
@@ -83,32 +85,51 @@ def init_once():
     device = st7789(serial, width=320, height=240, rotate=0)
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", 20)
 
+
+# --- Metadata Caching ---
+def load_metadata():
+    global metadata_cache, album_art_cache
+
+    if metadata_cache: return metadata_cache, album_art_cache
+
+    try:
+        audio = MP3(song_path, ID3=ID3)
+        tags = audio.tags
+        title = tags.get("TIT2", "Unknown Title").text[0]
+        artist = tags.get("TPE1", "Unknown Artist").text[0]
+        album = tags.get("TALB", "Unknown Album").text[0]
+        metadata_cache = (title, album, artist)
+
+        for tag in tags.values():
+            if isinstance(tag, APIC):
+                art = Image.open(BytesIO(tag.data)).convert("RGB").resize((100, 100))
+                album_art_cache = art
+                break
+        else:
+            album_art_cache = None
+
+    except:
+        metadata_cache = ("Unknown", "Unknown", "Unknown")
+        album_art_cache = None
+
+    return metadata_cache, album_art_cache
+
+
+# --- Screen Update ---
 def update_screen():
     global player, device, font
 
-    #background
     img = Image.new("RGB", device.size, "white")
     draw = ImageDraw.Draw(img)
 
-    # header
+    # Header
     draw.rectangle((0, 0, 320, 24), fill=(225, 225, 225))
     draw.text((110, -4), "Now Playing", font=font, fill="black")
 
-    # playlist index
-    current_index = 1
-    total_songs = 1
-    draw.text((8, 30), f"{current_index} of {total_songs}", font=font, fill="black")
+    # Playlist
+    draw.text((8, 30), "1 of 1", font=font, fill="black")
 
-    # shuffle
-    shuffle = True
-    if shuffle:
-        shuffleimg = Image.open("assets/shuffleicon.png").convert("RGBA")
-        rgb, a = shuffleimg.convert("RGB"), shuffleimg.getchannel("A")
-        inverted = ImageOps.invert(rgb)
-        inverted.putalpha(a)
-        img.paste(inverted, (280, 30), mask=inverted)
-
-    # playback bar
+    # Progress bar
     try:
         total_ms = player.get_length()
         elapsed_ms = player.get_time()
@@ -118,48 +139,33 @@ def update_screen():
             elapsed_sec = elapsed_ms // 1000
             remaining_sec = total_sec - elapsed_sec
 
-            def format_time(sec):
-                return f"{sec // 60}:{sec % 60:02}"
+            def fmt(sec): return f"{sec // 60}:{sec % 60:02}"
 
-            draw.text((10, 205), format_time(elapsed_sec), font=font, fill="black")
-            draw.text((260, 205), f"-{format_time(remaining_sec)}", font=font, fill="black")
+            draw.text((10, 205), fmt(elapsed_sec), font=font, fill="black")
+            draw.text((260, 205), f"-{fmt(remaining_sec)}", font=font, fill="black")
 
-            bar_width = 260
-            bar_height = 15
-            bar_x = 30
-            bar_y = 185
-            progress = int((elapsed_sec / total_sec) * bar_width)
-            draw.rectangle((bar_x, bar_y, bar_x + bar_width, bar_y + bar_height), fill=(225, 225, 225))
-            draw.rectangle((bar_x, bar_y, bar_x + progress, bar_y + bar_height), fill=(44, 121, 199))
+            bar_x, bar_y, bar_w, bar_h = 30, 185, 260, 15
+            progress = int((elapsed_sec / total_sec) * bar_w)
+            draw.rectangle((bar_x, bar_y, bar_x + bar_w, bar_y + bar_h), fill=(225, 225, 225))
+            draw.rectangle((bar_x, bar_y, bar_x + progress, bar_y + bar_h), fill=(44, 121, 199))
 
     except:
         pass
 
-    # metadata
-    try:
-        audio = MP3(song_path, ID3=ID3)
-        tags = audio.tags
-        title = tags.get("TIT2", "Unknown Title").text[0]
-        artist = tags.get("TPE1", "Unknown Artist").text[0]
-        album = tags.get("TALB", "Unknown Album").text[0]
+    # Metadata
+    (title, album, artist), art = load_metadata()
 
-        y = 68
-        draw.text((130, y), title, font=font, fill="black")
-        draw.text((130, y + 33), album, font=font, fill="black")
-        draw.text((130, y + 66), artist, font=font, fill="black")
+    draw.text((130, 68), title, font=font, fill="black")
+    draw.text((130, 101), album, font=font, fill="black")
+    draw.text((130, 134), artist, font=font, fill="black")
 
-        for tag in tags.values():
-            if isinstance(tag, APIC):
-                album_art = Image.open(BytesIO(tag.data)).convert("RGB")
-                album_art = album_art.resize((100, 100))
-                img.paste(album_art, (15, 65))
-                break
-
-    except:
-        draw.text((10, 60), "Metadata error", font=font, fill="red")
+    if art:
+        img.paste(art, (15, 65))
 
     device.display(img)
 
+
+# --- Main UI Loop ---
 def launch_ui():
     global show_player
     show_player = True
@@ -168,4 +174,4 @@ def launch_ui():
     while show_player:
         input_handler()
         update_screen()
-        time.sleep(1 / 16)
+        time.sleep(1 / 8) 
