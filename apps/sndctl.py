@@ -93,11 +93,12 @@ def update_screen():
 
     current_index = 1
     total_songs = 1
-    draw.text((6, 30), f"{current_index} of {total_songs}", font=font, fill="black")
+    draw.text((5, 30), f"{current_index} of {total_songs}", font=font, fill="black")
 
     shuffle = True
     if shuffle:
-        draw.text((6, 190), "🔀", font=font, fill="black")
+        shuffleimg = Image.open("assets/shuffleicon.png").convert("RGB")
+        img.paste(shuffleimg, (300, 30))
 
     try:
         total_ms = player.get_length()
