@@ -91,13 +91,13 @@ def select_press():
 def menu_press():
     global menu_idx, current_menu_options
     if menu_stack:
-        if menu_stack:
-            prev_menu, prev_idx = menu_stack.pop()
-            current_menu_options = list(prev_menu.findall("item"))
-            menu_idx = prev_idx
-        else:
-            current_menu_options = load_menu_root()
-            menu_idx = 0
+        prev_menu, prev_idx = menu_stack.pop()
+        print(prev_menu, prev_idx)
+        current_menu_options = list(prev_menu.findall("item"))
+        menu_idx = prev_idx
+    else:
+        current_menu_options = load_menu_root()
+        menu_idx = 0
 
 def skip_press():
     pass
