@@ -33,39 +33,74 @@ pwm = GPIO.PWM(18, 1000)
 pwm.start(backlight_brightness)
 
 def input_handler():
-    global select_idx, current_menu_options
+    
 
     sim_mode = True
     if sim_mode:
         print("sim input mode")
         u_input = input("input: ")
 
-        if u_input == "w":  # up
-            if select_idx > 0:
-                select_idx -= 1
-
-        elif u_input == "x":  # down
-            if select_idx < len(current_menu_options) - 1:
-                select_idx += 1
-
+        if u_input == "r":  # up
+            menu_up()
+        elif u_input == "f":  # down
+            menu_down()
         elif u_input == "s":  # select
-            selected_item = current_menu_options[select_idx]
-            submenu = selected_item.find("submenu")
-            if submenu is not None:
-                menu_stack.append(submenu)
-                select_idx = 0
-                current_menu_options = list(submenu.findall("item"))
-
-        elif u_input == "b":  # back
-            if menu_stack:
-                menu_stack.pop()
-                if menu_stack:
-                    current_menu_options = list(menu_stack[-1].findall("item"))
-                else:
-                    current_menu_options = load_menu_root()
-                select_idx = 0
+            select_press()
+        elif u_input == "w":  # back
+            menu_press()
+        elif u_input == "d":
+            skip_press()
+        elif u_input == "x":
+            pauseplay_press()
+        elif u_input == "a":
+            prev_press()
 
         update_screen(current_menu_options, select_idx)
+
+
+def menu_up():
+    global select_idx, current_menu_options
+    if select_idx > 0:
+        select_idx -= 1
+
+def menu_down():
+    global select_idx, current_menu_options
+    if select_idx < len(current_menu_options) - 1:
+        select_idx += 1
+
+def select_press():
+    global select_idx, current_menu_options
+    selected_item = current_menu_options[select_idx]
+    submenu = selected_item.find("submenu")
+    app = selected_item.attrib.get("app")
+    if submenu is not None:
+        menu_stack.append(submenu)
+        select_idx = 0
+        current_menu_options = list(submenu.findall("item"))
+    if app is not None:
+        print(app)
+
+def menu_press():
+    global select_idx, current_menu_options
+    if menu_stack:
+        menu_stack.pop()
+        if menu_stack:
+            current_menu_options = list(menu_stack[-1].findall("item"))
+        else:
+            current_menu_options = load_menu_root()
+        select_idx = 0
+
+def skip_press():
+    global select_idx, current_menu_options
+    pass
+
+def pauseplay_press():
+    global select_idx, current_menu_options
+    pass
+
+def prev_press():
+    global select_idx, current_menu_options
+    pass
 
 
 def load_menu_root(menu_file="menu.xml"):
@@ -86,7 +121,7 @@ def update_screen(menu_options, selected_index):
     # header
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
-    draw.text((120, label_margin - text_offset), "Menu", font=font, fill=text_color)
+    draw.text((130, label_margin - 6), "Menu", font=font, fill=text_color)
     
     # menu options
     for i, item in enumerate(menu_options):
