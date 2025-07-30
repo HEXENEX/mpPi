@@ -18,7 +18,7 @@ label_margin = 4
 
 # colors
 bg_color = "white"
-header_color = "grey"
+header_color = (180, 180, 180)
 text_color = "black"
 highlight_color = (44, 121, 199)
 hl_text_color = "white"
@@ -84,6 +84,8 @@ def update_screen(menu_options, selected_index):
     # header
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
+    draw.text((120, label_margin), "Menu", font=font, fill=text_color)
+    
 
     # menu options
     for i, item in enumerate(menu_options):
