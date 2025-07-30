@@ -1,17 +1,22 @@
 from PIL import ImageDraw, Image, ImageFont
 from luma.core.interface.serial import spi
-import xml.etree.ElementTree as ET
 from luma.lcd.device import st7789
+import xml.etree.ElementTree as ET
 import RPi.GPIO as GPIO
 import subprocess
 import time
 import sys
+import os
+
+# importing apps
+import apps.sndctl as sndctl
+
 
 # global vars
 is_running = True
 select_idx = 0
 current_menu_options = []
-menu_stack = []  # stack of XML <menu>/<submenu> nodes
+menu_stack = []
 
 # appearance settings
 backlight_brightness = 100
@@ -39,13 +44,13 @@ def input_handler():
     if sim_mode:
         u_input = input("=:")
 
-        if u_input == "r":  # up
+        if u_input == "r":
             menu_up()
-        elif u_input == "f":  # down
+        elif u_input == "f":
             menu_down()
-        elif u_input == "s":  # select
+        elif u_input == "s":
             select_press()
-        elif u_input == "w":  # back
+        elif u_input == "w":
             menu_press()
         elif u_input == "d":
             skip_press()
@@ -56,14 +61,13 @@ def input_handler():
 
         update_screen(current_menu_options, select_idx)
 
-
 def menu_up():
-    global select_idx, current_menu_options
+    global select_idx
     if select_idx > 0:
         select_idx -= 1
 
 def menu_down():
-    global select_idx, current_menu_options
+    global select_idx
     if select_idx < len(current_menu_options) - 1:
         select_idx += 1
 
@@ -72,31 +76,15 @@ def select_press():
     selected_item = current_menu_options[select_idx]
     submenu = selected_item.find("submenu")
     app = selected_item.attrib.get("app")
+
     if submenu is not None:
         menu_stack.append(submenu)
         select_idx = 0
         current_menu_options = list(submenu.findall("item"))
+
     if app is not None:
-        # Cleanup before launching new program
-        device.clear()
-        GPIO.cleanup()
-
-        # Run the app
-        subprocess.run(["python3", f"apps/{app}"])
-
-        # Reinitialize hardware
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(18, GPIO.OUT)
-        pwm = GPIO.PWM(18, 1000)
-        pwm.start(backlight_brightness)
-
-        serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
-        device.__init__(serial, width=320, height=240, rotate=0)
-
-        # Re-render screen
-        current_menu_options = load_menu_root()
-        update_screen(current_menu_options, select_idx)
-
+        if app == "sndctl":
+            sndctl.launch_ui()
 def menu_press():
     global select_idx, current_menu_options
     if menu_stack:
@@ -108,17 +96,13 @@ def menu_press():
         select_idx = 0
 
 def skip_press():
-    global select_idx, current_menu_options
     pass
 
 def pauseplay_press():
-    global select_idx, current_menu_options
     pass
 
 def prev_press():
-    global select_idx, current_menu_options
     pass
-
 
 def load_menu_root(menu_file="menu.xml"):
     tree = ET.parse(menu_file)
@@ -126,21 +110,16 @@ def load_menu_root(menu_file="menu.xml"):
     menu_stack.clear()
     return list(root.findall("item"))
 
-
 def update_screen(menu_options, selected_index):
     text_offset = -4
-
-    # background
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
-    # header
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
     draw.text((130, label_margin - 6), "Menu", font=font, fill=text_color)
-    
-    # menu options
+
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
         y = i * (font_size + label_margin)
@@ -161,7 +140,7 @@ try:
 
     while is_running:
         input_handler()
-        time.sleep(0.0625) # ~16 fps
+        time.sleep(0.0625)
 
 except KeyboardInterrupt:
     is_running = False
