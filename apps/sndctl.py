@@ -1,6 +1,6 @@
 # apps/sndctl/__init__.py
 
-from PIL import ImageDraw, Image, ImageFont, Image
+from PIL import ImageDraw, Image, ImageFont, Image, ImageOps
 from luma.core.interface.serial import spi
 from luma.lcd.device import st7789
 from mutagen.id3 import ID3, APIC
@@ -89,16 +89,19 @@ def update_screen():
     draw = ImageDraw.Draw(img)
 
     draw.rectangle((0, 0, 320, 24), fill=(225, 225, 225))
-    draw.text((110, 0), "Now Playing", font=font, fill="black")
+    draw.text((110, -4), "Now Playing", font=font, fill="black")
 
     current_index = 1
     total_songs = 1
-    draw.text((5, 30), f"{current_index} of {total_songs}", font=font, fill="black")
+    draw.text((8, 30), f"{current_index} of {total_songs}", font=font, fill="black")
 
     shuffle = True
     if shuffle:
-        shuffleimg = Image.open("assets/shuffleicon.png").convert("RGB")
-        img.paste(shuffleimg, (300, 30))
+        shuffleimg = Image.open("assets/shuffleicon.png").convert("RGBA")
+        rgb, a = shuffleimg.convert("RGB"), shuffleimg.getchannel("A")
+        inverted = ImageOps.invert(rgb)
+        inverted.putalpha(a)
+        img.paste(inverted, (280, 30), mask=inverted)
 
     try:
         total_ms = player.get_length()
