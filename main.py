@@ -91,7 +91,7 @@ def update_screen(menu_options, selected_index):
         y = i * (font_size + label_margin)
 
         if i == selected_index:
-            draw.rectangle((0, y, 320, y + font_size + label_margin + header_margin), fill=highlight_color)
+            draw.rectangle((0, y + header_margin, 320, y + font_size + label_margin + header_margin), fill=highlight_color)
             draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=hl_text_color)
         else:
             draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=text_color)

@@ -56,6 +56,7 @@ def init_player():
     player.audio_set_volume(volume)
     player.play()
 
+
 def update_screen():
     # background
     img = Image.new("RGB", device.size, bg_color)
