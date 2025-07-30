@@ -15,7 +15,7 @@ import apps.mklib as mklib
 # global vars
 is_running = True
 menu_idx = 0
-current_menu_options = []
+current_menu = []
 menu_stack = []
 
 # appearance settings
@@ -61,7 +61,7 @@ def input_handler():
             elif u_input == "a":
                 prev_press()
 
-            update_screen(current_menu_options, menu_idx)
+            update_screen(current_menu, menu_idx)
 
 def menu_up():
     global menu_idx
@@ -70,33 +70,32 @@ def menu_up():
 
 def menu_down():
     global menu_idx
-    if menu_idx < len(current_menu_options) - 1:
+    if menu_idx < len(current_menu) - 1:
         menu_idx += 1
 
 def select_press():
-    global menu_idx, current_menu_options
-    selected_item = current_menu_options[menu_idx]
+    global menu_idx, current_menu
+    selected_item = current_menu[menu_idx]
     submenu = selected_item.find("submenu")
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
         menu_stack.append((submenu, menu_idx))
         menu_idx = 0
-        current_menu_options = list(submenu.findall("item"))
+        current_menu = list(submenu.findall("item"))
 
     if app is not None:
         if app == "sndctl":
             sndctl.launch_ui()
 
 def menu_press():
-    global menu_idx, current_menu_options
+    global menu_idx, current_menu
     if menu_stack:
         prev_menu, prev_idx = menu_stack.pop()
-        print(prev_menu, prev_idx)
-        current_menu_options = list(prev_menu.findall("item"))
+        current_menu = prev_menu
         menu_idx = prev_idx
     else:
-        current_menu_options = load_menu_root()
+        current_menu = load_menu_root()
         menu_idx = 0
 
 def skip_press():
@@ -139,8 +138,8 @@ def update_screen(menu_options, selected_index):
 # --- Runtime --- #
 
 try:
-    current_menu_options = load_menu_root()
-    update_screen(current_menu_options, menu_idx)
+    current_menu = load_menu_root()
+    update_screen(current_menu, menu_idx)
 
     while is_running:
         input_handler()
