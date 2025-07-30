@@ -15,10 +15,13 @@ menu_stack = []  # stack of XML <menu>/<submenu> nodes
 backlight_brightness = 100
 font_size = 22
 label_margin = 4
-text_color = "black"
-hl_text_color = "white"
+
+# colors
 bg_color = "white"
+header_color = "grey"
+text_color = "black"
 highlight_color = (44, 121, 199)
+hl_text_color = "white"
 
 # init screen + backlight
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
@@ -79,12 +82,12 @@ def update_screen(menu_options, selected_index):
     draw = ImageDraw.Draw(img)
 
     # header
-    
+    draw.rectangle((0, 0, 320, font_size + label_margin), fill=header_color)
 
     # menu options
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
-        y = i * (font_size + label_margin)
+        y = i * (font_size + label_margin) * 2
 
         if i == selected_index:
             draw.rectangle((0, y, 320, y + font_size + label_margin), fill=highlight_color)
