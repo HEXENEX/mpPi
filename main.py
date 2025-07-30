@@ -78,7 +78,7 @@ def load_menu_root(menu_file="menu.xml"):
 def update_screen(menu_options, selected_index):
     # background
     img = Image.new("RGB", device.size, bg_color)
-    font = ImageFont.truetype("assets/Sans.ttf", font_size)
+    font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
     # header
