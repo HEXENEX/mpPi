@@ -4,9 +4,9 @@ from luma.lcd.device import st7789
 import xml.etree.ElementTree as ET
 import RPi.GPIO as GPIO
 import subprocess
+import select
 import time
 import sys
-import os
 
 # importing apps
 import apps.sndctl as sndctl
@@ -42,24 +42,25 @@ pwm.start(backlight_brightness)
 def input_handler():
     sim_mode = True
     if sim_mode:
-        u_input = input("=:")
+        if select.select([sys.stdin], [], [], 0.0)[0]:
+            u_input = sys.stdin.readline().strip()
 
-        if u_input == "r":
-            menu_up()
-        elif u_input == "f":
-            menu_down()
-        elif u_input == "s":
-            select_press()
-        elif u_input == "w":
-            menu_press()
-        elif u_input == "d":
-            skip_press()
-        elif u_input == "x":
-            pauseplay_press()
-        elif u_input == "a":
-            prev_press()
+            if u_input == "r":
+                menu_up()
+            elif u_input == "f":
+                menu_down()
+            elif u_input == "s":
+                select_press()
+            elif u_input == "w":
+                menu_press()
+            elif u_input == "d":
+                skip_press()
+            elif u_input == "x":
+                pauseplay_press()
+            elif u_input == "a":
+                prev_press()
 
-        update_screen(current_menu_options, select_idx)
+            update_screen(current_menu_options, select_idx)
 
 def menu_up():
     global select_idx
@@ -85,6 +86,7 @@ def select_press():
     if app is not None:
         if app == "sndctl":
             sndctl.launch_ui()
+
 def menu_press():
     global select_idx, current_menu_options
     if menu_stack:
@@ -140,7 +142,7 @@ try:
 
     while is_running:
         input_handler()
-        time.sleep(0.0625)
+        time.sleep(1 / 16)
 
 except KeyboardInterrupt:
     is_running = False

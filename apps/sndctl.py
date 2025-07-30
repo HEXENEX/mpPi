@@ -5,18 +5,66 @@ from luma.core.interface.serial import spi
 from luma.lcd.device import st7789
 from mutagen.id3 import ID3, APIC
 from mutagen.mp3 import MP3
-import RPi.GPIO as GPIO
-import vlc
-import time
 from io import BytesIO
+import select
+import time
+import vlc
+import sys
 
 # persistent player instance
-song_path = "library/Music/ilovebeer - Bilmuri.mp3"
+song_path = "library/Music/sauceintherough (bonus track) - brakence.mp3"
 volume = 40
 player = None
 device = None
 serial = None
 font = None
+
+show_player = True
+
+def input_handler():
+    sim_mode = True
+    if sim_mode:
+        if select.select([sys.stdin], [], [], 0.0)[0]:
+            u_input = sys.stdin.readline().strip()
+
+            if u_input == "r":
+                menu_up()
+            elif u_input == "f":
+                menu_down()
+            elif u_input == "s":
+                select_press()
+            elif u_input == "w":
+                menu_press()
+            elif u_input == "d":
+                skip_press()
+            elif u_input == "x":
+                pauseplay_press()
+            elif u_input == "a":
+                prev_press()
+
+def menu_up():
+    print("Volume down")
+
+def menu_down():
+    print("Volume down")
+
+def select_press():
+    print("show next menu")
+
+def menu_press():
+    global show_player
+    print("go back to main menu (with audio still playing)")
+    show_player = False
+
+def skip_press():
+    print("skip to next song")
+
+def pauseplay_press():
+    print("pause current song")
+
+def prev_press():
+    print("replay song / go to prev song if in first 1 second of play")
+
 
 def init_once():
     global player, serial, device, font
@@ -42,6 +90,14 @@ def update_screen():
 
     draw.rectangle((0, 0, 320, 24), fill=(225, 225, 225))
     draw.text((110, 0), "Now Playing", font=font, fill="black")
+
+    current_index = 1
+    total_songs = 1
+    draw.text((6, 30), f"{current_index} of {total_songs}", font=font, fill="black")
+
+    shuffle = True
+    if shuffle:
+        draw.text((6, 190), "🔀", font=font, fill="black")
 
     try:
         total_ms = player.get_length()
@@ -94,11 +150,12 @@ def update_screen():
 
     device.display(img)
 
-def launch_ui(duration=10):
-    """Show sndctl screen for `duration` seconds, then return to menu"""
+def launch_ui():
+    global show_player
+    show_player = True
     init_once()
 
-    t0 = time.time()
-    while time.time() - t0 < duration:
+    while show_player:
+        input_handler()
         update_screen()
-        time.sleep(0.0625)
+        time.sleep(1 / 16)
