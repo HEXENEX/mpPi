@@ -80,7 +80,7 @@ def select_press():
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
-        menu_stack.append(submenu, menu_idx)
+        menu_stack.append((submenu, menu_idx))
         menu_idx = 0
         current_menu_options = list(submenu.findall("item"))
 
