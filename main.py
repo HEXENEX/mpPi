@@ -76,6 +76,8 @@ def load_menu_root(menu_file="menu.xml"):
 
 
 def update_screen(menu_options, selected_index):
+    text_offset = -4
+
     # background
     img = Image.new("RGB", device.size, bg_color)
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
@@ -84,9 +86,8 @@ def update_screen(menu_options, selected_index):
     # header
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
-    draw.text((120, label_margin), "Menu", font=font, fill=text_color)
+    draw.text((120, label_margin - text_offset), "Menu", font=font, fill=text_color)
     
-
     # menu options
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
@@ -94,9 +95,9 @@ def update_screen(menu_options, selected_index):
 
         if i == selected_index:
             draw.rectangle((0, y + header_margin, 320, y + font_size + label_margin + header_margin), fill=highlight_color)
-            draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=hl_text_color)
+            draw.text((label_margin, y + header_margin + text_offset), label, font=font, fill=hl_text_color)
         else:
-            draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=text_color)
+            draw.text((label_margin, y + header_margin + text_offset), label, font=font, fill=text_color)
 
     device.display(img)
 

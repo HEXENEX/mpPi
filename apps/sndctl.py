@@ -15,7 +15,7 @@ import vlc
 # global vars
 is_running = True
 volume = 40
-song_path = "library/Music/party! (dance alone) - Knock2; Riovaz; cade clair.mp3"
+song_path = "library/Music/sauceintherough (bonus track) - brakence.mp3"
 player = None
 
 # appearance settings
@@ -31,7 +31,7 @@ highlight_color = (44, 121, 199)
 hl_text_color = "white"
 
 # init screen + backlight
-serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
+serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
 GPIO.setmode(GPIO.BCM)
@@ -64,20 +64,20 @@ def init_player():
 def update_screen():
     # background
     img = Image.new("RGB", device.size, bg_color)
-    font = ImageFont.truetype("assets/NotoSansMono.ttf", font_size)
+    font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
     # header
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
-    draw.text((120, label_margin), "Now Playing", font=font, fill=text_color)
+    draw.text((110, label_margin - 6), "Now Playing", font=font, fill=text_color)
 
 
     # playerUI
     # playlist
     current_index = 1
     total_songs = 28
-    draw.text((label_margin, header_margin + 6), f"{current_index} of {total_songs}", font=font, fill=text_color)
+    draw.text((6, 28), f"{current_index} of {total_songs}", font=font, fill=text_color)
 
     # draw playback bar with time elasps on the left, and time left on the right
     # playback bar
@@ -99,12 +99,12 @@ def update_screen():
                 # progress bar
                 bar_width = 260
                 bar_height = 15
-                bar_x = (320 - bar_width) / 2
-                bar_y = 190
+                bar_x = 30
+                bar_y = 185
 
                 # time text
-                draw.text((bar_x, 210), format_time(elapsed_sec), font=font, fill=text_color)
-                draw.text((bar_x + bar_width, 210), format_time(remaining_sec), font=font, fill=text_color)
+                draw.text((10, 205), format_time(elapsed_sec), font=font, fill=text_color)
+                draw.text((260, 205), f"-{format_time(remaining_sec)}", font=font, fill=text_color)
 
                 progress = int((elapsed_sec / total_sec) * bar_width)
 
@@ -124,7 +124,7 @@ def update_screen():
         album = tags.get("TALB", "Unknown Album").text[0]
 
         # Display metadata
-        y = 75
+        y = 64
         draw.text((130, y), title, font=font, fill=text_color)
         draw.text((130, y + 33), album, font=font, fill=text_color)
         draw.text((130, y + 2*33), artist, font=font, fill=text_color)
@@ -154,8 +154,10 @@ try:
     while is_running:
         #input_handler()
         update_screen()
+
         #time.sleep(0.5)
         time.sleep(0.0625)
+        #time.sleep(0.0167)
 
 except KeyboardInterrupt:
     is_running = False

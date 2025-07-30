@@ -1,5 +1,5 @@
 <menu>
-    <item label='Resume Playing' action='m_player'/>
+    <item label='Resume Playing' action='sndctl.py'/>
     <item label='Songs'>
         <submenu>
             <item label='Artist' action='load_songs' filter='artist'/>

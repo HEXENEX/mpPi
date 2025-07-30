@@ -17,15 +17,23 @@ The goal of this project is to build my own ipod classic style mp3 player. UI is
 ## Development Stages
 
 Step 0: <-- Currently here
-  - Functional UI
-  - Get Pi Zero connected to screen and trackpad
+  - Get Pi 3 B+ connected to screen and trackpad (half)
+  - Load Menu from XML (complete)
+  - Play audio from file aka 'sndctl' (complete)
+  - Create database from files in Music
+  - Make now playing playlist from database
+    - Different filters
+  - View playlists
+  - Play playlists
 
 Step 1:
-  - Get UI working on Pi Zero
   - Temporary development case
+  - Switch to pi zero
+  - Bluetooth
     
 Step 2:
   - Find way get into memory of Pi Zero from USB-C Connector
+  - Menu options in 'now playing'
 
 Step 3:
   - Battery
