@@ -80,7 +80,8 @@ def select_press():
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
-        menu_stack.append((submenu, menu_idx))
+        # Save current screen's menu and index
+        menu_stack.append((current_menu, menu_idx))
         menu_idx = 0
         current_menu = list(submenu.findall("item"))
 
@@ -91,8 +92,8 @@ def select_press():
 def menu_press():
     global menu_idx, current_menu
     if menu_stack:
-        prev_menu, prev_idx = menu_stack.pop()
-        current_menu = prev_menu
+        prev_menu_options, prev_idx = menu_stack.pop()
+        current_menu = prev_menu_options
         menu_idx = prev_idx
     else:
         current_menu = load_menu_root()
