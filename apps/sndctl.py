@@ -12,7 +12,7 @@ import vlc
 import sys
 
 # persistent player instance
-song_path = "library/Music/sauceintherough (bonus track) - brakence.mp3"
+song_path = "library/Music/94_from up on silent hill - Savage Ga$p.mp3"
 volume = 40
 player = None
 device = None

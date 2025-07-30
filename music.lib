@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf-8'?>
+<lib>
+    <song>
+        <song_id>1</song_id>
+        <title />
+        <album />
+        <artist />
+        <album_artist />
+        <genre />
+        <track_num />
+        <disc_num />
+        <year />
+        <comment />
+        <rating />
+        <plays>32</plays>
+        <path>library/Music/32_Lowlife (feat. Iamjakehill) - Josh A.mp3</path>
+    </song>
+    <song>
+        <song_id>2</song_id>
+        <title />
+        <album />
+        <artist />
+        <album_artist />
+        <genre />
+        <track_num />
+        <disc_num />
+        <year />
+        <comment />
+        <rating />
+        <plays>47</plays>
+        <path>library/Music/47_Blood Moon - Lil Revive.mp3</path>
+    </song>
+    <song>
+        <song_id>3</song_id>
+        <title />
+        <album />
+        <artist />
+        <album_artist />
+        <genre />
+        <track_num />
+        <disc_num />
+        <year />
+        <comment />
+        <rating />
+        <plays>0</plays>
+        <path>library/Music/sorry im a haunted house - Savage Ga$p.mp3</path>
+    </song>
+    <song>
+        <song_id>4</song_id>
+        <title />
+        <album />
+        <artist />
+        <album_artist />
+        <genre />
+        <track_num />
+        <disc_num />
+        <year />
+        <comment />
+        <rating />
+        <plays>22</plays>
+        <path>library/Music/22_Watching Gondolas Past My Bedtime - Alicks.mp3</path>
+    </song>
+    <song>
+        <song_id>5</song_id>
+        <title />
+        <album />
+        <artist />
+        <album_artist />
+        <genre />
+        <track_num />
+        <disc_num />
+        <year />
+        <comment />
+        <rating />
+        <plays>94</plays>
+        <path>library/Music/94_from up on silent hill - Savage Ga$p.mp3</path>
+    </song>
+</lib>
