@@ -1,9 +1,11 @@
-import xml.etree.ElementTree as ET
-from luma.core.interface.serial import spi
-from luma.lcd.device import st7789
 from PIL import ImageDraw, Image, ImageFont
-import time
+from luma.core.interface.serial import spi
+import xml.etree.ElementTree as ET
+from luma.lcd.device import st7789
 import RPi.GPIO as GPIO
+import subprocess
+import time
+import sys
 
 # global vars
 is_running = True
@@ -33,12 +35,9 @@ pwm = GPIO.PWM(18, 1000)
 pwm.start(backlight_brightness)
 
 def input_handler():
-    
-
     sim_mode = True
     if sim_mode:
-        print("sim input mode")
-        u_input = input("input: ")
+        u_input = input("=:")
 
         if u_input == "r":  # up
             menu_up()
@@ -78,7 +77,25 @@ def select_press():
         select_idx = 0
         current_menu_options = list(submenu.findall("item"))
     if app is not None:
-        print(app)
+        # Cleanup before launching new program
+        device.clear()
+        GPIO.cleanup()
+
+        # Run the app
+        subprocess.run(["python3", f"apps/{app}"])
+
+        # Reinitialize hardware
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(18, GPIO.OUT)
+        pwm = GPIO.PWM(18, 1000)
+        pwm.start(backlight_brightness)
+
+        serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
+        device.__init__(serial, width=320, height=240, rotate=0)
+
+        # Re-render screen
+        current_menu_options = load_menu_root()
+        update_screen(current_menu_options, select_idx)
 
 def menu_press():
     global select_idx, current_menu_options
@@ -144,7 +161,7 @@ try:
 
     while is_running:
         input_handler()
-        time.sleep(0.0625)
+        time.sleep(0.0625) # ~16 fps
 
 except KeyboardInterrupt:
     is_running = False
