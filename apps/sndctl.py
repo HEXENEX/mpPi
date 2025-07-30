@@ -14,7 +14,7 @@ import vlc
 
 # global vars
 is_running = True
-
+volume = 50
 
 # appearance settings
 backlight_brightness = 100

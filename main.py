@@ -82,18 +82,19 @@ def update_screen(menu_options, selected_index):
     draw = ImageDraw.Draw(img)
 
     # header
-    draw.rectangle((0, 0, 320, font_size + label_margin), fill=header_color)
+    header_margin = font_size + label_margin
+    draw.rectangle((0, 0, 320, header_margin), fill=header_color)
 
     # menu options
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
-        y = i * (font_size + label_margin) * 2
+        y = i * (font_size + label_margin)
 
         if i == selected_index:
-            draw.rectangle((0, y, 320, y + font_size + label_margin), fill=highlight_color)
-            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=hl_text_color)
+            draw.rectangle((0, y, 320, y + font_size + label_margin + header_margin), fill=highlight_color)
+            draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=hl_text_color)
         else:
-            draw.text((label_margin, y + (label_margin / 2)), label, font=font, fill=text_color)
+            draw.text((label_margin, y + (label_margin / 2) + header_margin), label, font=font, fill=text_color)
 
     device.display(img)
 
