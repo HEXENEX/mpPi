@@ -1,24 +1,24 @@
 <menu>
-    <item label='Resume Playing' action='sndctl.py'/>
+    <item label='Resume Playing' app='sndctl.py'/>
     <item label='Songs'>
         <submenu>
-            <item label='Artist' action='load_songs' filter='artist'/>
-            <item label='Album' action='load_songs' filter='album'/>
-            <item label='Title' action='load_songs' filter=''/>
-            <item label='Playlists' action='pl_viewer'/>
+            <item label='Artist' app='load_songs' filter='artist'/>
+            <item label='Album' app='load_songs' filter='album'/>
+            <item label='Title' app='load_songs' filter=''/>
+            <item label='Playlists' app='pl_viewer'/>
             <item label='Search'>
                 <submenu>
-                    <item label='By Artist' action='search_database' filter='artist'/>
-                    <item label='By Album' action='search_database' filter='album'/>
-                    <item label='By Title' action='search_database' filter='title'/>
-                    <item label='By Year' action='search_database' filter='year'/>
-                    <item label='By Any' action='search_database' filter=''/>
+                    <item label='By Artist' app='search_database' filter='artist'/>
+                    <item label='By Album' app='search_database' filter='album'/>
+                    <item label='By Title' app='search_database' filter='title'/>
+                    <item label='By Year' app='search_database' filter='year'/>
+                    <item label='By Any' app='search_database' filter=''/>
                 </submenu>
             </item>
-            <item label='Update Database' action='cu_database'/>
+            <item label='Update Database' app='cu_database'/>
         </submenu>
     </item>
-    <item label='Playlists' action='pl_viewer'/>
+    <item label='Playlists' app='pl_viewer'/>
     <item label='Settings'>
         <submenu>
             <item label='Bluetooth' value='False'/>
