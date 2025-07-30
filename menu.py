@@ -80,7 +80,7 @@ def select_press():
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
-        menu_stack.append(submenu)
+        menu_stack.append((submenu, menu_idx))  # Store both submenu and index
         menu_idx = 0
         current_menu_options = list(submenu.findall("item"))
 
@@ -91,11 +91,11 @@ def select_press():
 def menu_press():
     global menu_idx, current_menu_options
     if menu_stack:
-        menu_stack.pop()
-        if menu_stack:
-            current_menu_options = list(menu_stack[-1].findall("item"))
-        else:
-            current_menu_options = load_menu_root()
+        submenu, saved_idx = menu_stack.pop()
+        current_menu_options = list(submenu.findall("item"))
+        menu_idx = saved_idx
+    else:
+        current_menu_options = load_menu_root()
         menu_idx = 0
 
 def skip_press():
