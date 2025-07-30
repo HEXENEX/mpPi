@@ -13,9 +13,11 @@ import time
 import vlc
 
 # global vars
+song_path = "library/Music/ilovebeer - Bilmuri.mp3"
 is_running = True
+is_dimmed = False
+
 volume = 40
-song_path = "library/Music/sauceintherough (bonus track) - brakence.mp3"
 player = None
 
 # appearance settings
@@ -76,7 +78,7 @@ def update_screen():
     # playerUI
     # playlist
     current_index = 1
-    total_songs = 28
+    total_songs = 1
     draw.text((6, 28), f"{current_index} of {total_songs}", font=font, fill=text_color)
 
     # draw playback bar with time elasps on the left, and time left on the right
@@ -124,7 +126,7 @@ def update_screen():
         album = tags.get("TALB", "Unknown Album").text[0]
 
         # Display metadata
-        y = 64
+        y = 68
         draw.text((130, y), title, font=font, fill=text_color)
         draw.text((130, y + 33), album, font=font, fill=text_color)
         draw.text((130, y + 2*33), artist, font=font, fill=text_color)
@@ -155,9 +157,10 @@ try:
         #input_handler()
         update_screen()
 
-        #time.sleep(0.5)
-        time.sleep(0.0625)
-        #time.sleep(0.0167)
+        #time.sleep(2)      # ~0.5fps
+        #time.sleep(0.5)    # ~2 fps
+        time.sleep(0.0625)  # ~16 fps
+        #time.sleep(0.0167) # ~60 fps
 
 except KeyboardInterrupt:
     is_running = False
