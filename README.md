@@ -20,9 +20,12 @@ Step 0: <-- Currently here
   - Get Pi 3 B+ connected to screen and trackpad (half)
   - Load Menu from XML (complete)
   - Play audio from file aka 'sndctl' (complete)
+  - Run apps via menu
   - Create database from files in Music
+  - View database
+    - With different filters
   - Make now playing playlist from database
-    - Different filters
+    - With different filters
   - View playlists
   - Play playlists
 
