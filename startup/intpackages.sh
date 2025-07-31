@@ -6,6 +6,10 @@ echo "updating sudo"
 sudo apt update
 echo -e "updating complete\n"
 
+echo "installing pip3"
+sudo apt install python3-pip
+echo -3 "pip3 install complete\n"
+
 echo "installing system packages"
 sudo apt install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libatlas-base-dev vlc python3-pillow python3-rpi.gpio
 echo -e "done\n"
