@@ -72,18 +72,25 @@ def prev_press():
 def init_once():
     global player, serial, device, font, shuffle_icon
 
-    if player: return
+    if player:
+        return
 
-    instance = vlc.Instance('--aout', 'alsa')
+    # Set up VLC to use ALSA with Bluetooth (BlueALSA)
+    instance = vlc.Instance(
+        '--aout=alsa',
+        '--alsa-audio-device=bluealsa'  # Or add ":DEV=XX:XX:XX...,PROFILE=a2dp" if needed
+    )
     player = instance.media_player_new()
     media = instance.media_new(song_path)
     player.set_media(media)
     player.audio_set_volume(volume)
     player.play()
 
+    # Set up LCD
     serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=40000000)
     device = st7789(serial, width=320, height=240, rotate=0)
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", 20)
+
 
 
 # --- Metadata Caching ---
