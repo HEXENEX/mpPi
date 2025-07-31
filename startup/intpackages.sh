@@ -6,16 +6,13 @@ echo "updating sudo"
 sudo apt update
 echo -e "updating complete\n"
 
-echo "installing pip3"
-sudo apt install python3-pip
-echo -3 "pip3 install complete\n"
+echo "installing python3"
+sudo apt install -y python3
+echo -e "python3 install complete\n"
 
 echo "installing system packages"
-sudo apt install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libatlas-base-dev vlc python3-pillow python3-rpi.gpio
-echo -e "done\n"
+# more packages will be added in the future, i dont know which ones i need
+sudo apt install -y  python3-vlc python3-pillow python3-rpi.gpio python3-luma.lcd python3-mutagen
+echo -e "system packages install complete\n"
 
-echo "installing pip packages"
-pip3 install luma.lcd mutagen python-vlc
-echo -e "done\n"
-
-echo "installing packages complete"
+echo "all packages installed"
