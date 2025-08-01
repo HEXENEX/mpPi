@@ -21,5 +21,6 @@ img.paste(art, (40, -10))
 
 device.display(img)
 time.sleep(5)
+pwm.stop()
 GPIO.output(18, GPIO.LOW) # turns off backlight
 GPIO.cleanup()

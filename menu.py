@@ -156,5 +156,5 @@ try:
 
 except KeyboardInterrupt:
     is_running = False
-    GPIO.output(18, GPIO.LOW) # turns off backlight
+    pwm.stop()
     GPIO.cleanup()
