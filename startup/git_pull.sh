@@ -10,4 +10,4 @@ git fetch origin
 git reset --hard origin/main
 
 # echo "running mpPi UI"
-# python3 menu.py
+# python3 menu.py &

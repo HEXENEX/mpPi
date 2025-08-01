@@ -21,3 +21,4 @@ img.paste(art, (40, -10))
 
 device.display(img)
 time.sleep(5)
+GPIO.cleanup()
