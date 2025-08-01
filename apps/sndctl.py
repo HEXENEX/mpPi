@@ -12,7 +12,7 @@ import vlc
 import sys
 
 # --- Constants ---
-song_path = "library\Music\Bad Suns\Disappear Here\2_Disappear Here - Bad Suns.mp3"
+song_path = r"library\Music\Bad Suns\Disappear Here\2_Disappear Here - Bad Suns.mp3"
 volume = 40
 
 # --- Globals ---
