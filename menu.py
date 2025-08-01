@@ -17,6 +17,7 @@ is_running = True
 menu_idx = 0
 current_menu = []
 menu_stack = []
+current_menu_label = "Main Menu"
 
 # appearance settings
 backlight_brightness = 100
@@ -74,17 +75,17 @@ def menu_down():
         menu_idx += 1
 
 def select_press():
-    global menu_idx, current_menu
+    global menu_idx, current_menu, current_menu_label
     selected_item = current_menu[menu_idx]
     submenu = selected_item.find("submenu")
-
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
-        # Save current screen's menu and index
-        menu_stack.append((current_menu, menu_idx))
+        # Save current screen's menu, index, and label
+        menu_stack.append((current_menu, menu_idx, current_menu_label))
         menu_idx = 0
         current_menu = list(submenu.findall("item"))
+        current_menu_label = selected_item.attrib.get("label", "Menu")
 
     if app is not None:
         if app == "sndctl":
@@ -94,14 +95,17 @@ def select_press():
 
 
 def menu_press():
-    global menu_idx, current_menu
+    global menu_idx, current_menu, current_menu_label
     if menu_stack:
-        prev_menu_options, prev_idx = menu_stack.pop()
+        prev_menu_options, prev_idx, prev_label = menu_stack.pop()
         current_menu = prev_menu_options
         menu_idx = prev_idx
+        current_menu_label = prev_label
     else:
         current_menu = load_menu_root()
         menu_idx = 0
+        current_menu_label = "Menu"
+
 
 def skip_press():
     pass
@@ -124,10 +128,9 @@ def update_screen(menu_options, selected_index):
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
-    header_text = current_menu[menu_idx].get("label")
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
-    draw.text((label_margin, label_margin - 6), header_text, font=font, fill=text_color)
+    draw.text((label_margin, label_margin - 6), current_menu_label, font=font, fill=text_color)
 
     for i, item in enumerate(menu_options):
         label = item.attrib.get("label", "")
