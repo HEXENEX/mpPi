@@ -75,8 +75,8 @@ def make_library():
         tree.write(lib_path, encoding='utf-8', xml_declaration=True)
 
         print("Created library.file")
-    except:
-        print("Failed to make library file")
+    except Exception as e:
+        print(f"Failed to make library file: {e}")
 
 if __name__ == "__main__":
     make_library()
