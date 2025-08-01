@@ -22,4 +22,5 @@ pwm.start(100) # 100 on
 
 device.display(img)
 time.sleep(5)
+GPIO.output(18, GPIO.LOW) # turns off backlight
 GPIO.cleanup()
