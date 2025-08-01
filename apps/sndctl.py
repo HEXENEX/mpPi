@@ -12,7 +12,7 @@ import vlc
 import sys
 
 # --- Constants ---
-song_path = "library/Music/94_from up on silent hill - Savage Ga$p.mp3"
+song_path = "library\Music\Bad Suns\Disappear Here\2_Disappear Here - Bad Suns.mp3"
 volume = 40
 
 # --- Globals ---
@@ -62,7 +62,13 @@ def skip_press():
     print("skip to next song")
 
 def pauseplay_press():
-    print("pause current song")
+    print("pause/play current song")
+    state = player.get_state()
+    if state == vlc.State.Playing:
+        player.pause()  # pauses
+    elif state == vlc.State.Paused:
+        player.play()   # resumes
+
 
 def prev_press():
     print("replay song / go to prev song if in first 1 second of play")
