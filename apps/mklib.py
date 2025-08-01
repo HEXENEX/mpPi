@@ -1,7 +1,7 @@
 # apps/mklib/__init__.py
 
 import xml.etree.ElementTree as ET
-from mutagen.id3 import ID3
+from mutagen.id3 import ID3, TIT2, TALB, TPE1, TPE2, TCON, TRCK, TPOS, TYER, COMM, POPM
 from mutagen.mp3 import MP3
 import os
 
