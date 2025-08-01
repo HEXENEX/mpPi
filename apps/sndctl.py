@@ -22,6 +22,8 @@ metadata_cache = None
 album_art_cache = None
 show_player = True
 
+song_path = "library\Music\Bad Suns\Disappear Here\2_Disappear Here - Bad Suns.mp3"
+
 def input_handler():
     sim_mode = True
     if sim_mode:
@@ -68,7 +70,7 @@ def prev_press():
 
 
 # --- Initialization ---
-def init_once(song_path):
+def init_once():
     global player, serial, device, font, shuffle_icon
 
     if player:
@@ -172,10 +174,10 @@ def update_screen():
 
 
 # --- Main UI Loop ---
-def launch_ui(song_path):
+def launch_ui():
     global show_player
     show_player = True
-    init_once(song_path)
+    init_once()
 
     while show_player:
         input_handler()
