@@ -56,18 +56,18 @@ def make_library():
                     song = ET.SubElement(xml_root, "song")
 
                     ET.SubElement(song, "song_id").text = str(song_id)
-                    ET.SubElement(song, "title").text = title
-                    ET.SubElement(song, "album").text = album
-                    ET.SubElement(song, "artist").text = artist
-                    ET.SubElement(song, "album_artist").text = album_artist
-                    ET.SubElement(song, "genre").text = genre
-                    ET.SubElement(song, "track_num").text = track_num
-                    ET.SubElement(song, "disc_num").text = disc_num
-                    ET.SubElement(song, "year").text = year
-                    ET.SubElement(song, "comment").text = comment
-                    ET.SubElement(song, "rating").text = rating
-                    ET.SubElement(song, "plays").text = plays
-                    ET.SubElement(song, "path").text = full_path
+                    ET.SubElement(song, "title").text = str(title)
+                    ET.SubElement(song, "album").text = str(album)
+                    ET.SubElement(song, "artist").text = str(artist)
+                    ET.SubElement(song, "album_artist").text = str(album_artist)
+                    ET.SubElement(song, "genre").text = str(genre)
+                    ET.SubElement(song, "track_num").text = str(track_num)
+                    ET.SubElement(song, "disc_num").text = str(disc_num)
+                    ET.SubElement(song, "year").text = str(year)
+                    ET.SubElement(song, "comment").text = str(comment)
+                    ET.SubElement(song, "rating").text = str(rating)
+                    ET.SubElement(song, "plays").text = str(plays)
+                    ET.SubElement(song, "path").text = str(full_path)
 
         print("export xml")
         tree = ET.ElementTree(xml_root)
