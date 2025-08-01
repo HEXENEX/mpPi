@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu>
+<menu label='Main Menu'>
     <item label='Resume Playing' app='sndctl'/>
     <item label='Songs'>
         <submenu>

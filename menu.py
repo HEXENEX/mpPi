@@ -17,7 +17,6 @@ is_running = True
 menu_idx = 0
 current_menu = []
 menu_stack = []
-header_text = "Main Menu"
 
 # appearance settings
 backlight_brightness = 100
@@ -75,19 +74,15 @@ def menu_down():
         menu_idx += 1
 
 def select_press():
-    global menu_idx, current_menu, header_text
+    global menu_idx, current_menu
     selected_item = current_menu[menu_idx]
     submenu = selected_item.find("submenu")
-    header = selected_item.get("label")
-    
-    # Always update header text right away
-    header_text = header
 
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
         # Save current screen's menu and index
-        menu_stack.append((current_menu, menu_idx, header))
+        menu_stack.append((current_menu, menu_idx))
         menu_idx = 0
         current_menu = list(submenu.findall("item"))
 
@@ -99,12 +94,11 @@ def select_press():
 
 
 def menu_press():
-    global menu_idx, current_menu, header_text
+    global menu_idx, current_menu
     if menu_stack:
-        prev_menu_options, prev_idx, hder_txt = menu_stack.pop()
+        prev_menu_options, prev_idx = menu_stack.pop()
         current_menu = prev_menu_options
         menu_idx = prev_idx
-        header_text = hder_txt
     else:
         current_menu = load_menu_root()
         menu_idx = 0
@@ -130,6 +124,7 @@ def update_screen(menu_options, selected_index):
     font = ImageFont.truetype("assets/NotoSansMono_Condensed-SemiBold.ttf", font_size)
     draw = ImageDraw.Draw(img)
 
+    header_text = current_menu[menu_idx].get("label")
     header_margin = font_size + label_margin
     draw.rectangle((0, 0, 320, header_margin), fill=header_color)
     draw.text((label_margin, label_margin - 6), header_text, font=font, fill=text_color)
