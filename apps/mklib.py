@@ -25,20 +25,25 @@ def make_library():
         for dirpath, dirs, files in os.walk(music_path):
             for file in files:
                 if file.lower().endswith(".mp3"):
+                    
+                    # full path of file
+                    full_path = os.path.join(dirpath, file)
+                    
+                    audio = MP3(full_path, ID3=ID3)
+                    tags = audio.tags
 
                     # find mp3 metadata
-                    full_path = os.path.join(dirpath, file)
                     song_id += 1
-                    title = None
-                    album = None
-                    artist = None
-                    album_artist = None
-                    genre = None
-                    track_num = None
-                    disc_num = None
-                    year = None
-                    comment = None
-                    rating = None
+                    title = tags.get("TIT2", "Unknown Title").text[0]
+                    album = tags.get("TALB", "Unknown Album").text[0]
+                    artist = tags.get("TPE1", "Unknown Artist").text[0]
+                    album_artist = tags.get("TPE2", "Unknown Artist").text[0]
+                    genre = tags.get("TCON", "Unknown Genre").text[0]
+                    track_num = tags.get("TRCK", "Unknown Track Number").text[0]
+                    disc_num = tags.get("TPOS", "Unknown Disc Number").text[0]
+                    year = tags.get("TDRC", "Unknown Year").text[0] or tags.get("TYER", "Unknown Year").text[0]
+                    comment = tags.get("COMM::'eng'", "Unknown Comment").text[0]
+                    rating = tags.get("POPM", "Unknown Rating").text[0]
                     plays = file.split("_")[0]
                     if plays == file:
                         plays = '0'
