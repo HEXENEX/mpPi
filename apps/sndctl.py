@@ -12,7 +12,6 @@ import vlc
 import sys
 
 # --- Constants ---
-song_path = "library/Music/94_from up on silent hill - Savage Ga$p.mp3"
 volume = 40
 
 # --- Globals ---
@@ -69,7 +68,7 @@ def prev_press():
 
 
 # --- Initialization ---
-def init_once():
+def init_once(song_path):
     global player, serial, device, font, shuffle_icon
 
     if player:
@@ -173,10 +172,10 @@ def update_screen():
 
 
 # --- Main UI Loop ---
-def launch_ui():
+def launch_ui(song_path):
     global show_player
     show_player = True
-    init_once()
+    init_once(song_path)
 
     while show_player:
         input_handler()
