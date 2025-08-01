@@ -16,8 +16,8 @@ img = Image.new("RGB", device.size, "black")
 draw = ImageDraw.Draw(img)
 
 # draw splash logo
-art = Image.open("assets/mpPilogo.png").convert("RGBA").resize((180, 180))
-img.paste(art, (70, 30))
+art = Image.open("assets/mpPilogo.png").convert("RGBA").resize((240, 240))
+img.paste(art, (40, 0))
 
 device.display(img)
 time.sleep(5)
