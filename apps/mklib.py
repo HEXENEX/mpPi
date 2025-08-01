@@ -23,17 +23,20 @@ def make_library():
     song_id = 0
     try:
         for dirpath, dirs, files in os.walk(music_path):
+            print(dirpath)
             for file in files:
+                print(file)
                 if file.lower().endswith(".mp3"):
-                    
+                    print("is mp3")
                     # full path of file
                     full_path = os.path.join(dirpath, file)
+                    song_id += 1
                     
                     audio = MP3(full_path, ID3=ID3)
                     tags = audio.tags
 
+                    print("getting tags")
                     # find mp3 metadata
-                    song_id += 1
                     title = tags.get("TIT2", "Unknown Title").text[0]
                     album = tags.get("TALB", "Unknown Album").text[0]
                     artist = tags.get("TPE1", "Unknown Artist").text[0]
@@ -48,6 +51,7 @@ def make_library():
                     if plays == file:
                         plays = '0'
 
+                    print("added xml")
                     # add to XML
                     song = ET.SubElement(xml_root, "song")
 
@@ -65,6 +69,7 @@ def make_library():
                     ET.SubElement(song, "plays").text = plays
                     ET.SubElement(song, "path").text = full_path
 
+        print("export xml")
         tree = ET.ElementTree(xml_root)
         ET.indent(tree, space="    ")
         tree.write(lib_path, encoding='utf-8', xml_declaration=True)
