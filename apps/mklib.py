@@ -27,26 +27,26 @@ def make_library():
             for file in files:
                 print(file)
                 if file.lower().endswith(".mp3"):
-                    print("is mp3")
-                    # full path of file
-                    full_path = os.path.join(dirpath, file)
-                    song_id += 1
-                    
-                    audio = MP3(full_path, ID3=ID3)
-                    tags = audio.tags
 
-                    print("getting tags")
-                    # find mp3 metadata
-                    title = tags.get("TIT2", "Unknown Title").text[0]
-                    album = tags.get("TALB", "Unknown Album").text[0]
-                    artist = tags.get("TPE1", "Unknown Artist").text[0]
-                    album_artist = tags.get("TPE2", "Unknown Artist").text[0]
-                    genre = tags.get("TCON", "Unknown Genre").text[0]
-                    track_num = tags.get("TRCK", "Unknown Track Number").text[0]
-                    disc_num = tags.get("TPOS", "Unknown Disc Number").text[0]
-                    year = tags.get("TDRC", "Unknown Year").text[0] or tags.get("TYER", "Unknown Year").text[0]
-                    comment = tags.get("COMM::'eng'", "Unknown Comment").text[0]
-                    rating = tags.get("POPM", "Unknown Rating").text[0]
+                    full_path = os.path.join(dirpath, file)
+                    audio = MP3(full_path, ID3=ID3)
+                    tags = audio.tags or {}
+
+                    def get_tag(key, default=None):
+                        tag = tags.get(key)
+                        return tag.text[0] if tag and hasattr(tag, 'text') else default
+
+                    print("get metadata")
+                    title = get_tag("TIT2", "Unknown Title")
+                    album = get_tag("TALB", "Unknown Album")
+                    artist = get_tag("TPE1", "Unknown Artist")
+                    album_artist = get_tag("TPE2")
+                    genre = get_tag("TCON")
+                    track_num = get_tag("TRCK")
+                    disc_num = get_tag("TPOS")
+                    year = get_tag("TDRC") or get_tag("TYER")
+                    comment = get_tag("COMM::'eng'")
+                    rating = get_tag("POPM", "Unknown Rating")
                     plays = file.split("_")[0]
                     if plays == file:
                         plays = '0'
