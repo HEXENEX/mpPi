@@ -87,7 +87,7 @@ def select_press():
 
     if app is not None:
         if app == "sndctl":
-            sndctl.launch_ui("library\Music\Bad Suns\Language & Perspective\4_We Move Like The Ocean - Bad Suns.mp3") # temp target song
+            sndctl.launch_ui("library\Music\Bad Suns\Disappear Here\1_Patience - Bad Suns.mp3") # temp target song
         elif app == "mklib":
             mklib.make_library()
 
