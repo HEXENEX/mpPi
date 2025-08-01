@@ -17,7 +17,7 @@ is_running = True
 menu_idx = 0
 current_menu = []
 menu_stack = []
-header_text = ""
+header_text = "Main Menu"
 
 # appearance settings
 backlight_brightness = 100
