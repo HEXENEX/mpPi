@@ -85,7 +85,7 @@ def select_press():
         menu_stack.append((current_menu, menu_idx, current_menu_label))
         menu_idx = 0
         current_menu = list(submenu.findall("item"))
-        current_menu_label = selected_item.attrib.get("label", "Menu")
+        current_menu_label = selected_item.attrib.get("label", "Main Menu")
 
     if app is not None:
         if app == "sndctl":
@@ -104,7 +104,7 @@ def menu_press():
     else:
         current_menu = load_menu_root()
         menu_idx = 0
-        current_menu_label = "Menu"
+        current_menu_label = "Main Menu"
 
 
 def skip_press():
