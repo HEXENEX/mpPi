@@ -22,7 +22,13 @@
     <item label='Playlists' app='pl_viewer'/>
     <item label='Settings'>
         <submenu>
-            <item label='Bluetooth' value='False'/>
+            <item label='Bluetooth'>
+                <submenu>
+                    <item label='Power' value='True'/>
+                    <item label='Pair Device'/>
+                    <item label='Previous Devices'/>
+                </submenu>
+            </item>
             <item label='Wifi' value='False'/>
             <item label='Backlight Timer' value='60'/>
             <item label='Shutdown Timer' value='300'/>
