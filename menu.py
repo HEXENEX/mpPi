@@ -88,6 +88,8 @@ def select_press():
     if app is not None:
         if app == "sndctl":
             sndctl.launch_ui()
+        elif app == "mklib":
+            mklib.make_library()
 
 def menu_press():
     global menu_idx, current_menu

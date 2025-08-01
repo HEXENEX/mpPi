@@ -16,7 +16,7 @@
                     <item label='By Any' app='search_database' filter=''/>
                 </submenu>
             </item>
-            <item label='Update Database' app='cu_database'/>
+            <item label='Update Database' app='mklib'/>
         </submenu>
     </item>
     <item label='Playlists' app='pl_viewer'/>
