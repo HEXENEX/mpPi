@@ -12,6 +12,7 @@ import vlc
 import sys
 
 # --- Constants ---
+song_path = "library/Music/94_from up on silent hill - Savage Ga$p.mp3"
 volume = 40
 
 # --- Globals ---
@@ -21,8 +22,6 @@ font = None
 metadata_cache = None
 album_art_cache = None
 show_player = True
-
-song_path = "library\Music\Bad Suns\Disappear Here\2_Disappear Here - Bad Suns.mp3"
 
 def input_handler():
     sim_mode = True
