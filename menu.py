@@ -79,7 +79,10 @@ def select_press():
     selected_item = current_menu[menu_idx]
     submenu = selected_item.find("submenu")
     header = selected_item.get("label")
-    print(header)
+    
+    # Always update header text right away
+    header_text = header
+
     app = selected_item.attrib.get("app")
 
     if submenu is not None:
@@ -90,9 +93,10 @@ def select_press():
 
     if app is not None:
         if app == "sndctl":
-            sndctl.launch_ui() # temp target song
+            sndctl.launch_ui()
         elif app == "mklib":
             mklib.make_library()
+
 
 def menu_press():
     global menu_idx, current_menu, header_text
