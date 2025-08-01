@@ -31,7 +31,7 @@ highlight_color = (44, 121, 199)
 hl_text_color = "white"
 
 # init screen + backlight
-serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=52000000)
+serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=36000000)
 device = st7789(serial, width=320, height=240, rotate=0)
 
 # backlight pwm

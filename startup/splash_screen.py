@@ -6,19 +6,18 @@ import RPi.GPIO as GPIO
 
 serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=36000000)
 device = st7789(serial, width=320, height=240, rotate=0)
-
-
-# draw test text
-img = Image.new("RGB", device.size, "black")
-draw = ImageDraw.Draw(img)
-draw.rectangle((0, 0, 320, 240), fill="black")
-draw.text((160, 120), "Pulling Repository", fill="white")
-
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
 pwm = GPIO.PWM(18, 1000)
-pwm.start(100) # 100 on
+pwm.start(100) # backlight 100% on
+
+# draw
+img = Image.new("RGB", device.size, "black")
+draw = ImageDraw.Draw(img)
+
+# draw splash logo
+art = Image.open("assets/mpPilogo").convert("RGBA").resize((160, 160))
+img.paste(art, (80, 40))
 
 device.display(img)
-time.sleep(1)
+time.sleep(5)
