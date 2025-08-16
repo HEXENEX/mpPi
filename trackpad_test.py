@@ -95,8 +95,6 @@ try:
             x, y, z, flags, down = result
             if down:
                 print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
-            else:
-                print("No touch detected")
         time.sleep(0.01)
 except KeyboardInterrupt:
     pass
