@@ -2,46 +2,47 @@ import spidev
 import RPi.GPIO as GPIO
 import time
 
-# --- GPIO Setup ---
-DR_PIN = 22  # Connect Data Ready (DR) pin here
+# --- GPIO setup ---
+DR_PIN = 22
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(DR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(DR_PIN, GPIO.IN)
 
-# --- SPI Setup ---
+# --- SPI setup ---
 spi = spidev.SpiDev()
-spi.open(0, 0)           # bus 0, device 0 (CE0)
-spi.max_speed_hz = 1000000  # 1 MHz
-spi.mode = 0b01           # CPOL=0, CPHA=1 (typical for TM040040)
+spi.open(0, 0)  # (bus 0, CE0)
+spi.max_speed_hz = 1000000  # 1 MHz is safe to start
+spi.mode = 0b01             # Mode 1 is typical for Cirque Pinnacle
 spi.bits_per_word = 8
 
-# --- Read Touch Data ---
-def read_touch():
-    """
-    Reads 4 bytes from TM040040 (example: X1, Y1, X2, Y2 for 2 fingers)
-    """
-    # Wait for DR pin to go low (data ready)
-    while GPIO.input(DR_PIN) == 1:
-        time.sleep(0.001)
+# --- Helper functions ---
+def spi_write_then_read(write_data, read_len):
+    """Write bytes, then read back."""
+    spi.xfer2(write_data)
+    return spi.readbytes(read_len)
 
-    # Typical sequence: write 0x00 to request touch report
-    spi.xfer2([0x00])
-    time.sleep(0.001)
+def read_register(reg_addr, length=1):
+    """Read register from TM040040."""
+    # Datasheet defines command format (example: MSB=1 for read)
+    cmd = [reg_addr | 0x80]  # set read flag
+    return spi_write_then_read(cmd, length)
 
-    # Read 4 bytes: X1, Y1, X2, Y2
-    data = spi.readbytes(4)
-    return data
+def write_register(reg_addr, value):
+    """Write register to TM040040."""
+    # MSB=0 for write
+    spi.xfer2([reg_addr & 0x7F, value])
 
-# --- Main Loop ---
+# --- Main loop ---
+print("Waiting for trackpad input (Ctrl+C to exit)...")
+
 try:
     while True:
-        touch_data = read_touch()
-        x1, y1, x2, y2 = touch_data
-        print(f"Finger 1: ({x1},{y1}), Finger 2: ({x2},{y2})")
-        time.sleep(0.05)
-
+        if GPIO.input(DR_PIN) == GPIO.HIGH:
+            # Example: read motion packet (assuming starts at 0x12)
+            packet = read_register(0x12, 5)  # length depends on mode
+            print("Packet:", packet)
+        time.sleep(0.001)  # 1 ms poll
 except KeyboardInterrupt:
-    print("Exiting...")
-
+    pass
 finally:
     spi.close()
     GPIO.cleanup()
