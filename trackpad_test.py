@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 # --- GPIO Setup ---
-DR_PIN = 17  # Connect Data Ready (DR) pin here
+DR_PIN = 22  # Connect Data Ready (DR) pin here
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
