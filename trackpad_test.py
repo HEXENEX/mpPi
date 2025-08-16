@@ -10,7 +10,7 @@ GPIO.setup(DR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # SPI setup
 spi = spidev.SpiDev()
 spi.open(0, 0)  # Bus 0, device 0 (SS pin GPIO 7 mapped to CE0)
-spi.max_speed_hz = 1000000  # 1 MHz
+spi.max_speed_hz = 115200  # 1.152 MHz
 spi.mode = 0b00
 
 def read_trackpad():
