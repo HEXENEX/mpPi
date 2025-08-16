@@ -2,47 +2,43 @@ import spidev
 import RPi.GPIO as GPIO
 import time
 
-# --- GPIO setup ---
-DR_PIN = 22
+# GPIO setup
+DR_PIN = 22   # Data Ready pin from trackpad
+CS_PIN = 7    # Chip Select (SS)
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DR_PIN, GPIO.IN)
 
-# --- SPI setup ---
+# SPI setup
 spi = spidev.SpiDev()
-spi.open(0, 0)  # (bus 0, CE0)
-spi.max_speed_hz = 1000000  # 1 MHz is safe to start
-spi.mode = 0b01             # Mode 1 is typical for Cirque Pinnacle
-spi.bits_per_word = 8
+spi.open(0, 1)  # Bus 0, Device 1 (CE1 = GPIO7)
+spi.max_speed_hz = 1000000  # 1 MHz, trackpad spec allows up to ~2MHz
+spi.mode = 0b01             # CPOL=0, CPHA=1 (Cirque datasheet requirement)
 
-# --- Helper functions ---
-def spi_write_then_read(write_data, read_len):
-    """Write bytes, then read back."""
-    spi.xfer2(write_data)
-    return spi.readbytes(read_len)
-
-def read_register(reg_addr, length=1):
-    """Read register from TM040040."""
-    # Datasheet defines command format (example: MSB=1 for read)
-    cmd = [reg_addr | 0x80]  # set read flag
-    return spi_write_then_read(cmd, length)
-
-def write_register(reg_addr, value):
-    """Write register to TM040040."""
-    # MSB=0 for write
-    spi.xfer2([reg_addr & 0x7F, value])
-
-# --- Main loop ---
-print("Waiting for trackpad input (Ctrl+C to exit)...")
+def read_packet():
+    """
+    Read a 5-byte data packet from the TM040040.
+    Packet format (from Cirque docs):
+    [status, x_lo, x_hi, y_lo, y_hi]
+    """
+    # Assert CS manually (if needed, spidev can handle it but we’ll be explicit)
+    data = spi.readbytes(5)
+    return data
 
 try:
+    print("Starting trackpad test. Move your finger... Press Ctrl+C to stop.")
     while True:
-        if GPIO.input(DR_PIN) == GPIO.HIGH:
-            # Example: read motion packet (assuming starts at 0x12)
-            packet = read_register(0x12, 5)  # length depends on mode
-            print("Packet:", packet)
-        time.sleep(0.001)  # 1 ms poll
+        # Wait for DR to signal data available
+        if GPIO.input(DR_PIN) == 1:
+            packet = read_packet()
+            if len(packet) == 5:
+                status = packet[0]
+                x = packet[1] | (packet[2] << 8)
+                y = packet[3] | (packet[4] << 8)
+                print(f"Status={status:02X}, X={x}, Y={y}")
+        time.sleep(0.001)  # tiny delay to avoid busy-looping
 except KeyboardInterrupt:
-    pass
+    print("Exiting.")
 finally:
     spi.close()
     GPIO.cleanup()
