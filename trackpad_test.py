@@ -3,26 +3,29 @@ import RPi.GPIO as GPIO
 import time
 
 # Pin definitions
-DR_PIN = 22  # Data Ready
+DR_PIN = 22       # Data Ready
+CE_PIN = 7        # Chip Select for trackpad
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(CE_PIN, GPIO.OUT)
+GPIO.output(CE_PIN, GPIO.HIGH)  # CE inactive
 
 # SPI setup
 spi = spidev.SpiDev()
-spi.open(0, 1)  # Bus 0, device 1 → CE1 (GPIO 7)
-spi.max_speed_hz = 500000
-spi.mode = 0b11
+spi.open(0, 0)  # Use any bus/device; CE will be manual
+spi.max_speed_hz = 500000  # 500 kHz is safer
+spi.mode = 0b01
 
-def read_trackpad(timeout=1.0):
-    start = time.time()
-    # Wait for DR to go low (data ready) with timeout
-    while GPIO.input(DR_PIN):
-        if time.time() - start > timeout:
-            return None, None, None
-        time.sleep(0.001)
+def read_trackpad():
+    # Pull CE low to start SPI transaction
+    GPIO.output(CE_PIN, GPIO.LOW)
     
-    # Read 5 bytes: Status, X_H, X_L, Y_H, Y_L
-    raw_data = spi.readbytes(5)
+    # Send read command (0x00 is typical; check your module datasheet)
+    # TM040040 usually responds with 5 bytes: Status, X_H, X_L, Y_H, Y_L
+    raw_data = spi.xfer2([0x00]*5)
+    
+    # Release CE
+    GPIO.output(CE_PIN, GPIO.HIGH)
     
     status = raw_data[0]
     x = (raw_data[1] << 8) | raw_data[2]
@@ -32,11 +35,12 @@ def read_trackpad(timeout=1.0):
 
 try:
     while True:
-        status, x, y = read_trackpad()
-        if status is not None:
+        # Optionally, check DR before reading
+        if GPIO.input(DR_PIN) == 0:
+            status, x, y = read_trackpad()
             print(f"Status={status:02X}, X={x}, Y={y}")
         else:
-            print("No data (DR never went low)")
+            print("No touch detected")
         time.sleep(0.05)
 
 except KeyboardInterrupt:
