@@ -3,8 +3,8 @@ import RPi.GPIO as GPIO
 import time
 
 # Pin definitions
-DR_PIN = 22       # Data Ready
-CE_PIN = 7        # Chip Select for trackpad
+DR_PIN = 22   # Data Ready
+CE_PIN = 7    # Chip Select for trackpad
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(CE_PIN, GPIO.OUT)
@@ -12,40 +12,77 @@ GPIO.output(CE_PIN, GPIO.HIGH)  # CE inactive
 
 # SPI setup
 spi = spidev.SpiDev()
-spi.open(0, 0)  # Use any bus/device; CE will be manual
-spi.max_speed_hz = 500000  # 500 kHz is safer
-spi.mode = 0b01
+spi.open(0, 0)           # SPI bus 0, device 0 (CE manually controlled)
+spi.max_speed_hz = 500000
+spi.mode = 0b01           # SPI_MODE1, matches Arduino example
 
-def read_trackpad():
-    # Pull CE low to start SPI transaction
-    GPIO.output(CE_PIN, GPIO.LOW)
-    
-    # Send read command (0x00 is typical; check your module datasheet)
-    # TM040040 usually responds with 5 bytes: Status, X_H, X_L, Y_H, Y_L
-    raw_data = spi.xfer2([0x00]*5)
-    
-    # Release CE
-    GPIO.output(CE_PIN, GPIO.HIGH)
-    
-    status = raw_data[0]
-    x = (raw_data[1] << 8) | raw_data[2]
-    y = (raw_data[3] << 8) | raw_data[4]
-    
-    return status, x, y
+# RAP masks
+WRITE_MASK = 0x80
+READ_MASK  = 0xA0
+
+# Register config values (from Arduino example)
+SYSCONFIG_1   = 0x00
+FEEDCONFIG_1  = 0x03
+FEEDCONFIG_2  = 0x1F
+Z_IDLE_COUNT  = 0x05
+
+# Helper functions
+def ce_low(): GPIO.output(CE_PIN, GPIO.LOW)
+def ce_high(): GPIO.output(CE_PIN, GPIO.HIGH)
+
+def rap_write(address, value):
+    cmd = WRITE_MASK | address
+    ce_low()
+    spi.xfer2([cmd, value])
+    ce_high()
+    time.sleep(0.001)
+
+def rap_read(address, count=1):
+    cmd = READ_MASK | address
+    ce_low()
+    result = spi.xfer2([cmd] + [0xFC]*count)
+    ce_high()
+    return result[1:]  # skip first dummy byte
+
+# Initialization sequence
+def trackpad_init():
+    # Clear status
+    rap_write(0x02, 0x00)
+    time.sleep(0.001)
+    # Configure registers
+    rap_write(0x03, SYSCONFIG_1)
+    rap_write(0x05, FEEDCONFIG_2)
+    rap_write(0x04, FEEDCONFIG_1)
+    rap_write(0x0A, Z_IDLE_COUNT)
+    time.sleep(0.01)
+
+# Read absolute coordinates
+def read_touch():
+    # Check DR first
+    if GPIO.input(DR_PIN) == 0:
+        data = rap_read(0x12, 6)
+        buttonFlags = data[0] & 0x3F
+        x = data[2] | ((data[4] & 0x0F) << 8)
+        y = data[3] | ((data[4] & 0xF0) << 4)
+        z = data[5] & 0x3F
+        touchDown = x != 0
+        return x, y, z, buttonFlags, touchDown
+    else:
+        return None
+
+# Main
+trackpad_init()
+print("Trackpad initialized. Touch the pad...")
 
 try:
     while True:
-        # Optionally, check DR before reading
-        if GPIO.input(DR_PIN) == 0:
-            status, x, y = read_trackpad()
-            print(f"Status={status:02X}, X={x}, Y={y}")
-        else:
-            print("No touch detected")
+        result = read_touch()
+        if result:
+            x, y, z, flags, down = result
+            print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
         time.sleep(0.05)
-
 except KeyboardInterrupt:
     pass
-
 finally:
     spi.close()
     GPIO.cleanup()
