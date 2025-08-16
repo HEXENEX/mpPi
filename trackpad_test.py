@@ -13,7 +13,7 @@ GPIO.output(CE_PIN, GPIO.HIGH)  # CE inactive
 
 # SPI setup
 spi = spidev.SpiDev()
-spi.open(0, 0)           # SPI bus 0, device 0 (CE manually controlled)
+spi.open(0, 1)           # SPI bus 1, device 1 (CE manually controlled)
 spi.max_speed_hz = 500000
 spi.mode = 0b01           # SPI_MODE1
 
