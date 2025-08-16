@@ -94,7 +94,7 @@ try:
         if result:
             x, y, z, flags, down = result
             print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
-        time.sleep(0.05)
+        time.sleep(0.01)
 except KeyboardInterrupt:
     pass
 finally:
