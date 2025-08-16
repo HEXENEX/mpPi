@@ -71,7 +71,7 @@ def trackpad_init():
 
 # Read absolute coordinates
 def read_touch():
-    #clear_flags()  # prevent DR from freezing
+    clear_flags()  # prevent DR from freezing
     # Check DR first
     if GPIO.input(DR_PIN) == 0:
         data = rap_read(0x12, 6)
