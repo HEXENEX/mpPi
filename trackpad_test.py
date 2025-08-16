@@ -2,6 +2,7 @@ import spidev
 import RPi.GPIO as GPIO
 import time
 
+
 # GPIO setup
 DR_PIN = 22   # Data Ready pin from trackpad
 CS_PIN = 7    # Chip Select (SS)
