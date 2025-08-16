@@ -26,6 +26,13 @@ FEEDCONFIG_1  = 0x03
 FEEDCONFIG_2  = 0x1F
 Z_IDLE_COUNT  = 0x05
 
+PINNACLE_X_LOWER = 127
+PINNACLE_X_UPPER = 1919
+PINNACLE_Y_LOWER = 63
+PINNACLE_Y_UPPER = 1471
+PINNACLE_X_RANGE = PINNACLE_X_UPPER - PINNACLE_X_LOWER
+PINNACLE_Y_RANGE = PINNACLE_Y_UPPER - PINNACLE_Y_LOWER
+
 # Helper functions
 def ce_low(): GPIO.output(CE_PIN, GPIO.LOW)
 def ce_high(): GPIO.output(CE_PIN, GPIO.HIGH)
@@ -83,6 +90,19 @@ def read_touch():
         return x, y, z, buttonFlags, touchDown
     else:
         return None
+    
+def scale_coordinates(x, y, x_res=1024, y_res=1024):
+    # Clip raw coordinates
+    x = max(PINNACLE_X_LOWER, min(PINNACLE_X_UPPER, x))
+    y = max(PINNACLE_Y_LOWER, min(PINNACLE_Y_UPPER, y))
+    # Translate to 0-origin
+    x -= PINNACLE_X_LOWER
+    y -= PINNACLE_Y_LOWER
+    # Scale to desired resolution
+    x_scaled = int(x * x_res / PINNACLE_X_RANGE)
+    y_scaled = int(y * y_res / PINNACLE_Y_RANGE)
+    return x_scaled, y_scaled
+
 
 # Main
 trackpad_init()
@@ -94,6 +114,7 @@ try:
         if result:
             x, y, z, flags, down = result
             if down:
+                x_s, y_s = scale_coordinates(x, y)
                 print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
         time.sleep(0.01)
 except KeyboardInterrupt:
