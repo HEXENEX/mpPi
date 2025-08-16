@@ -82,7 +82,8 @@ try:
             print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
         time.sleep(0.05)
 except KeyboardInterrupt:
-    pass
+    spi.close()
+    GPIO.cleanup()
 finally:
     spi.close()
     GPIO.cleanup()
