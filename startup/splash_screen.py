@@ -1,26 +1,26 @@
-import spidev
-import RPi.GPIO as GPIO
+from luma.core.interface.serial import spi
+from luma.lcd.device import st7789
+from PIL import ImageDraw, Image, ImageFont
 import time
+import RPi.GPIO as GPIO
 
-DR_PIN = 22
-
+serial = spi(port=0, device=0, gpio_DC=25, gpio_RST=27, bus_speed_hz=36000000)
+device = st7789(serial, width=320, height=240, rotate=0)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(DR_PIN, GPIO.IN)
+GPIO.setup(18, GPIO.OUT)
+pwm = GPIO.PWM(18, 1000)
+pwm.start(100) # backlight 100% on
 
-spi = spidev.SpiDev()
-spi.open(0, 1)          # bus 0, CE1 (GPIO7)
-spi.max_speed_hz = 1000000
-spi.mode = 0b01
+# draw
+img = Image.new("RGB", device.size, "white")
+draw = ImageDraw.Draw(img)
 
-try:
-    print("Move your finger... Press Ctrl+C to exit")
-    while True:
-        if GPIO.input(DR_PIN):
-            data = spi.readbytes(5)
-            print("Packet:", [f"{b:02X}" for b in data])
-        time.sleep(0.001)
-except KeyboardInterrupt:
-    pass
-finally:
-    spi.close()
-    GPIO.cleanup()
+# draw splash logo
+art = Image.open("assets/mpPilogo.png").convert("RGBA").resize((240, 240))
+img.paste(art, (40, -10))
+
+device.display(img)
+time.sleep(5)
+pwm.stop()
+GPIO.output(18, GPIO.LOW) # turns off backlight
+GPIO.cleanup()
