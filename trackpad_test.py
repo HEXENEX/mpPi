@@ -93,8 +93,11 @@ try:
         result = read_touch()
         if result:
             x, y, z, flags, down = result
-            print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
-        time.sleep(0.05)
+            if down:
+                print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
+            else:
+                print("No touch detected")
+        time.sleep(0.01)
 except KeyboardInterrupt:
     pass
 finally:
