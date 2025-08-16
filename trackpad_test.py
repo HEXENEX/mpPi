@@ -13,7 +13,7 @@ GPIO.output(CE_PIN, GPIO.HIGH)  # CE inactive
 # SPI setup
 spi = spidev.SpiDev()
 spi.open(0, 0)           # SPI bus 0, device 0 (CE manually controlled)
-spi.max_speed_hz = 50000
+spi.max_speed_hz = 500000
 spi.mode = 0b01           # SPI_MODE1, matches Arduino example
 
 # RAP masks
@@ -44,20 +44,34 @@ def rap_read(address, count=1):
     ce_high()
     return result[1:]  # skip first dummy byte
 
-# Initialization sequence
-def trackpad_init():
-    # Clear status
+# Clear status flags
+def clear_flags():
     rap_write(0x02, 0x00)
     time.sleep(0.001)
-    # Configure registers
+
+# Enable feed (bit 0 of 0x04)
+def enable_feed(enable=True):
+    val = rap_read(0x04, 1)[0]
+    if enable:
+        val |= 0x01
+    else:
+        val &= ~0x01
+    rap_write(0x04, val)
+    time.sleep(0.001)
+
+# Initialization sequence
+def trackpad_init():
+    clear_flags()
     rap_write(0x03, SYSCONFIG_1)
     rap_write(0x05, FEEDCONFIG_2)
     rap_write(0x04, FEEDCONFIG_1)
     rap_write(0x0A, Z_IDLE_COUNT)
+    enable_feed(True)
     time.sleep(0.01)
 
 # Read absolute coordinates
 def read_touch():
+    clear_flags()  # prevent DR from freezing
     # Check DR first
     if GPIO.input(DR_PIN) == 0:
         data = rap_read(0x12, 6)
@@ -82,8 +96,7 @@ try:
             print(f"X={x}, Y={y}, Z={z}, Buttons={flags}, TouchDown={down}")
         time.sleep(0.05)
 except KeyboardInterrupt:
-    spi.close()
-    GPIO.cleanup()
+    pass
 finally:
     spi.close()
     GPIO.cleanup()
