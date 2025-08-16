@@ -12,7 +12,7 @@ pwm = GPIO.PWM(18, 1000)
 pwm.start(100) # backlight 100% on
 
 # draw
-img = Image.new("RGB", device.size, "black")
+img = Image.new("RGB", device.size, "white")
 draw = ImageDraw.Draw(img)
 
 # draw splash logo
