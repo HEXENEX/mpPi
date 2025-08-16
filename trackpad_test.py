@@ -13,7 +13,7 @@ GPIO.output(CE_PIN, GPIO.HIGH)  # CE inactive
 # SPI setup
 spi = spidev.SpiDev()
 spi.open(0, 0)           # SPI bus 0, device 0 (CE manually controlled)
-spi.max_speed_hz = 500000
+spi.max_speed_hz = 50000
 spi.mode = 0b01           # SPI_MODE1, matches Arduino example
 
 # RAP masks
